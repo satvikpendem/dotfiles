@@ -2,14 +2,14 @@
 export PATH=/home/satvik/.cargo/bin:$PATH
 export CARGO_TARGET_DIR=$HOME/.cargo/cache
 
-# Nim
-export PATH=/home/satvik/.nimble/bin:$PATH
-
 # Starship.rs
 eval "$(starship init zsh)"
 
 # Zoxide
 eval "$(zoxide init zsh)"
+
+# Nim
+export PATH=/home/satvik/.nimble/bin:$PATH
 
 # fnm
 export PATH=/home/satvik/.fnm:$PATH
