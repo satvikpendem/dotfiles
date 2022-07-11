@@ -5,6 +5,15 @@ export CARGO_TARGET_DIR=$HOME/.cargo/cache
 # Starship.rs
 eval "$(starship init zsh)"
 
+# Save history
+HISTFILE=~/.zsh_history
+HISTSIZE=9223372036854775807
+SAVEHIST=9223372036854775807
+setopt INC_APPEND_HISTORY_TIME
+export HISTTIMEFORMAT="[%F %T] "
+setopt EXTENDED_HISTORY
+setopt HIST_IGNORE_ALL_DUPS
+
 # Zoxide
 eval "$(zoxide init zsh)"
 
