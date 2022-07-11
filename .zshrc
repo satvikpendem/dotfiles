@@ -46,6 +46,7 @@ alias fd="fdfind"
 alias tree="exa --tree"
 alias md="mkdir -p"
 alias tl="tldr"
+alias gc="git add . && git commit && git push"
 
 ## Apt
 alias apt="sudo apt"
