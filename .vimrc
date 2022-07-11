@@ -1,3 +1,4 @@
+" Detect OS
 if !exists("g:os")
   if has("win64") || has("win32") || has("win16")
     let g:os = "Windows"
@@ -14,6 +15,7 @@ endif
 syntax on
 colorscheme HyperTermBlack
 set guifont=SF\ Mono\ Powerline:h10
+set termguicolors
 
 set cursorline
 set number
