@@ -10,7 +10,7 @@ endif
 if g:os == "Linux"
   set runtimepath^=/mnt/c/users/satvik/vimfiles runtimepath+=/mnt/c/users/satvik/vimfiles/after
   let &packpath=&runtimepath
-elif g:os == "Windows"
+elseif g:os == "Windows"
   set runtimepath^=~\vimfiles runtimepath+=~\vimfiles\after
   let &packpath=&runtimepath
 endif
