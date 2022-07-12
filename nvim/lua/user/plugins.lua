@@ -33,7 +33,7 @@ return require('packer').startup(function(use)
   use "nvim-lua/popup.nvim" -- An implementation of the Popup API from vim in Neovim
   use "nvim-lua/plenary.nvim" -- Useful lua functions used in lots of plugins
 
-  use { "ms-jpq/coq_nvim", branch = "coq", run = ':COQdeps | :COQnow --shut-up' }
+  use { "ms-jpq/coq_nvim", branch = "coq" }
   use { "ms-jpq/coq.artifacts", branch = "artifacts" }
 
   -- Automatically set up your configuration after cloning packer.nvim
