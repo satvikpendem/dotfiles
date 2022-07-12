@@ -24,5 +24,11 @@ set cursorline
 set number
 set expandtab
 set tabstop=2 shiftwidth=2
-
+set ignorecase
+set smartcase
 set mouse=a
+set incsearch
+set showmatch
+set nowrap
+
+inoremap jk <esc>
