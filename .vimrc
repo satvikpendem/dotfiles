@@ -32,3 +32,4 @@ set showmatch
 set nowrap
 
 inoremap jk <esc>
+
