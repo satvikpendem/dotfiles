@@ -21,13 +21,20 @@ end
 
 packer.init {
   display = {
-    non_interactive = true,
+    -- non_interactive = true,
+    open_fn = function()
+        return require("packer.util").float { border = "rounded" }
+    end,
   },
 }
 
 return require('packer').startup(function(use)
-  use 'wbthomason/packer.nvim' -- Packer can manage itself
+  use "wbthomason/packer.nvim" -- Packer can manage itself
+  use "nvim-lua/popup.nvim" -- An implementation of the Popup API from vim in Neovim
   use "nvim-lua/plenary.nvim" -- Useful lua functions used in lots of plugins
+
+  use { "ms-jpq/coq_nvim", branch = "coq", run = ':COQdeps | :COQnow --shut-up' }
+  use { "ms-jpq/coq.artifacts", branch = "artifacts" }
 
   -- Automatically set up your configuration after cloning packer.nvim
   -- Put this at the end after all plugins
@@ -35,4 +42,3 @@ return require('packer').startup(function(use)
     require('packer').sync()
   end
 end)
-
