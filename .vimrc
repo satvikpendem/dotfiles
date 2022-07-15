@@ -30,6 +30,8 @@ set mouse=a
 set incsearch
 set showmatch
 set nowrap
+set autochdir
 
 inoremap jk <esc>
+nnoremap <CR> :let @/ = ""
 
