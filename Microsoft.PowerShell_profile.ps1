@@ -21,3 +21,4 @@ Set-Alias vi vim.exe
 Set-Alias vim nvim.exe
 Set-Alias v nvim.exe
 Set-Alias cat bat.exe
+function gap { git add . && git commit && git push }
