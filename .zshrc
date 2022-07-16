@@ -48,6 +48,7 @@ alias md="mkdir -p"
 alias tl="tldr"
 alias gc="git add . && git commit && git push"
 alias f="sk --preview 'bat --color=always --style numbers,changes {}'"
+alias gap="git add . && git push && git commit"
 
 ## Apt
 alias apt="sudo apt"
