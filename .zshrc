@@ -3,6 +3,7 @@ export PATH=/home/satvik/.cargo/bin:$PATH
 export CARGO_TARGET_DIR=$HOME/.cargo/cache
 
 # Starship.rs
+export STARSHIP_CONFIG=~/dotfiles/starship-unix.toml
 eval "$(starship init zsh)"
 
 # Save history
