@@ -4,6 +4,8 @@ Invoke-Expression (& {
     (zoxide init --hook $hook powershell | Out-String)
     })
 
+$ENV:STARSHIP_CONFIG = "$HOME\dotfiles\starship-windows.toml"
+
 # Starship.rs
 Invoke-Expression (&starship init powershell)
 
