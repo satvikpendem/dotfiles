@@ -1,2 +1,2 @@
-format = "[🔴 Unix](bold fg:#009ee8) $all"
+format = "[🔴 Unix](bold fg:#e95420) $all"
 

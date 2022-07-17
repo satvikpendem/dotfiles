@@ -66,6 +66,7 @@ alias ci="cargo install"
 
 alias vz="vim ~/.zshrc"
 alias sz="source ~/.zshrc"
+alias vv="vim ~/.vimrc"
 
 # zsh cd case insensitive
 zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*'

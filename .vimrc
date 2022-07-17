@@ -15,24 +15,26 @@ elseif g:os == "Windows"
   let &packpath=&runtimepath
 endif
 
-syntax on
-set guifont=SF\ Mono\ Powerline:h10
-set termguicolors
-" colorscheme HyperTermBlack
+if !exists('g:vscode')
+  syntax on
+  set guifont=SF\ Mono\ Powerline:h10
+  set termguicolors
+  colorscheme HyperTermBlack
 
-set cursorline
-set number
-set expandtab
-set tabstop=2 shiftwidth=2
-set ignorecase
-set smartcase
-set mouse=a
-set incsearch
-set showmatch
-set nowrap
-set autochdir
-set signcolumn=number
-set updatetime=100
+  set cursorline
+  set number
+  set expandtab
+  set tabstop=2 shiftwidth=2
+  set ignorecase
+  set smartcase
+  set mouse=a
+  set incsearch
+  set showmatch
+  set nowrap
+  set autochdir
+  set signcolumn=number
+  set updatetime=100
+endif
 
 inoremap jk <esc>
 nnoremap <CR> :let @/ = ""
