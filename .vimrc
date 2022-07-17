@@ -18,7 +18,7 @@ endif
 syntax on
 set guifont=SF\ Mono\ Powerline:h10
 set termguicolors
-colorscheme HyperTermBlack
+" colorscheme HyperTermBlack
 
 set cursorline
 set number
