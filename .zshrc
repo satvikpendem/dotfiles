@@ -48,6 +48,7 @@ alias tree="exa --tree"
 alias md="mkdir -p"
 alias tl="tldr"
 alias gc="git add . && git commit && git push"
+alias gs="git status"
 alias f="sk --preview 'bat --color=always --style numbers,changes {}'"
 alias gap="git add . && git commit && git push"
 

@@ -1,3 +1,5 @@
+if vim.g.vscode ~= nil then os.exit() end
+
 vim.cmd('source ~/.vimrc')
 
 require "user.plugins"

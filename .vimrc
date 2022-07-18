@@ -1,3 +1,8 @@
+" Do not apply configs if running in VSCode-Neovim
+if exists('g:vscode')
+  finish
+endif
+
 " Detect OS
 if !exists("g:os")
   if has("win64") || has("win32") || has("win16")
@@ -15,26 +20,24 @@ elseif g:os == "Windows"
   let &packpath=&runtimepath
 endif
 
-if !exists('g:vscode')
-  syntax on
-  set guifont=SF\ Mono\ Powerline:h10
-  set termguicolors
-  colorscheme HyperTermBlack
+syntax on
+set guifont=SF\ Mono\ Powerline:h10
+set termguicolors
+colorscheme HyperTermBlack
 
-  set cursorline
-  set number
-  set expandtab
-  set tabstop=2 shiftwidth=2
-  set ignorecase
-  set smartcase
-  set mouse=a
-  set incsearch
-  set showmatch
-  set nowrap
-  set autochdir
-  set signcolumn=number
-  set updatetime=100
-endif
+set cursorline
+set number
+set expandtab
+set tabstop=2 shiftwidth=2
+set ignorecase
+set smartcase
+set mouse=a
+set incsearch
+set showmatch
+set nowrap
+set autochdir
+set signcolumn=number
+set updatetime=100
 
 inoremap jk <esc>
 " https://stackoverflow.com/a/657484
@@ -55,21 +58,21 @@ inoremap <c-r> <c-v>
 " NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
 " other plugin before putting this into your config.
 inoremap <silent><expr> <TAB>
-      \ pumvisible() ? "\<C-n>" :
-      \ CheckBackspace() ? "\<TAB>" :
-      \ coc#refresh()
+\ pumvisible() ? "\<C-n>" :
+\ CheckBackspace() ? "\<TAB>" :
+\ coc#refresh()
 inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
 
 function! CheckBackspace() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
+let col = col('.') - 1
+return !col || getline('.')[col - 1]  =~# '\s'
 endfunction
 
 " Use <c-space> to trigger completion.
 if has('nvim')
-  inoremap <silent><expr> <c-space> coc#refresh()
+inoremap <silent><expr> <c-space> coc#refresh()
 else
-  inoremap <silent><expr> <c-@> coc#refresh()
+inoremap <silent><expr> <c-@> coc#refresh()
 endif
 
 " Make <CR> auto-select the first completion item and notify coc.nvim to
