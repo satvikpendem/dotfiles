@@ -46,6 +46,8 @@ return require("packer").startup(function(use)
   use { "windwp/nvim-autopairs", config = function() require("nvim-autopairs").setup {} end }
   use { "tpope/vim-surround" }
 
+  use { "ms-jpq/chadtree", branch = 'chad', run = 'python3 -m chadtree deps' }
+
   -- Automatically set up your configuration after cloning packer.nvim
   -- Put this at the end after all plugins
   if packer_bootstrap then
