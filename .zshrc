@@ -6,10 +6,31 @@ export CARGO_TARGET_DIR=$HOME/.cargo/cache
 export STARSHIP_CONFIG=~/dotfiles/starship-unix.toml
 eval "$(starship init zsh)"
 
+# Bind ctrl+key actions
+### ctrl+arrows
+bindkey "\e[1;5C" forward-word
+bindkey "\e[1;5D" backward-word
+# urxvt
+bindkey "\eOc" forward-word
+bindkey "\eOd" backward-word
+
+### ctrl+delete
+bindkey "\e[3;5~" kill-word
+# urxvt
+bindkey "\e[3^" kill-word
+
+### ctrl+backspace
+bindkey '^H' backward-kill-word
+
+### ctrl+shift+delete
+bindkey "\e[3;6~" kill-line
+# urxvt
+bindkey "\e[3@" kill-line
+
 # Save history
 HISTFILE=~/.zsh_history
-HISTSIZE=9223372036854775807
-SAVEHIST=9223372036854775807
+HISTSIZE=100000
+SAVEHIST=100000
 setopt INC_APPEND_HISTORY_TIME
 export HISTTIMEFORMAT="[%F %T] "
 setopt EXTENDED_HISTORY
