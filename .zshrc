@@ -56,6 +56,10 @@ source /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 export BUN_INSTALL="/home/satvik/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
+# Deno
+export DENO_INSTALL="/home/satvik/.deno"
+export PATH="$DENO_INSTALL/bin:$PATH"
+
 # Default editor for git and others
 export EDITOR=vim
 
