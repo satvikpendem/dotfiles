@@ -1,5 +1,7 @@
+add_newline = false
+
 format = "[🔴 Unix](bold fg:#e95420) $all"
 
 [directory]
-truncation_length = 99
-
+truncation_length = 100
+truncate_to_repo = false
