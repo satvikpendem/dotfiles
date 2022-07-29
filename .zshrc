@@ -10,31 +10,23 @@ eval "$(starship init zsh)"
 ### ctrl+arrows
 bindkey "\e[1;5C" forward-word
 bindkey "\e[1;5D" backward-word
-# urxvt
-bindkey "\eOc" forward-word
-bindkey "\eOd" backward-word
 
 ### ctrl+delete
 bindkey "\e[3;5~" kill-word
-# urxvt
-bindkey "\e[3^" kill-word
 
 ### ctrl+backspace
 bindkey '^H' backward-kill-word
 
 ### ctrl+shift+delete
 bindkey "\e[3;6~" kill-line
-# urxvt
-bindkey "\e[3@" kill-line
 
 # Save history
+setopt histignorealldups sharehistory extendedhistory
 HISTFILE=~/.zsh_history
 HISTSIZE=100000
 SAVEHIST=100000
 setopt INC_APPEND_HISTORY_TIME
 export HISTTIMEFORMAT="[%F %T] "
-setopt EXTENDED_HISTORY
-setopt HIST_IGNORE_ALL_DUPS
 
 # Zoxide
 eval "$(zoxide init zsh)"
@@ -45,9 +37,6 @@ export PATH=/home/satvik/.nimble/bin:$PATH
 # fnm
 export PATH=/home/satvik/.fnm:$PATH
 eval "`fnm env`"
-
-# zsh-autosuggestions (https://github.com/zsh-users/zsh-autosuggestions)
-source /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 # bun completions
 [ -s "/home/satvik/.bun/_bun" ] && source "/home/satvik/.bun/_bun"
@@ -97,3 +86,21 @@ alias vv="vim ~/.vimrc"
 # zsh cd case insensitive
 zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*'
 autoload -Uz compinit && compinit
+
+# Use fzf/skim to fuzzy search cd into directories
+alias f='cd $(fd -H --type d | sk)'
+
+# zsh-autosuggestions (https://github.com/zsh-users/zsh-autosuggestions)
+source /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+source ~/dotfiles/zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+# history-substring-search
+source ~/dotfiles/zsh/zsh-history-substring-search/zsh-history-substring-search.zsh
+bindkey "$terminfo[kcuu1]" history-substring-search-up
+bindkey "$terminfo[kcud1]" history-substring-search-down
+HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='bg=green,fg=white,bold'
+HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND='bg=red,fg=white,bold'
+HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS='i'
+
+# Use bat with manpages
+export MANPAGER="sh -c 'col -bx | bat -l man -p'"
