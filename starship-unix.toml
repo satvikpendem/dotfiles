@@ -1,2 +1,5 @@
 format = "[🔴 Unix](bold fg:#e95420) $all"
 
+[directory]
+truncation_length = 99
+

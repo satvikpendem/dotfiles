@@ -36,7 +36,7 @@ export PATH=/home/satvik/.nimble/bin:$PATH
 
 # fnm
 export PATH=/home/satvik/.fnm:$PATH
-eval "`fnm env`"
+eval "$(fnm env --use-on-cd)"
 
 # bun completions
 [ -s "/home/satvik/.bun/_bun" ] && source "/home/satvik/.bun/_bun"
@@ -56,6 +56,7 @@ export EDITOR=vim
 alias vim="nvim"
 alias ls="exa -la --git --icons"
 alias l="ls"
+alias rm="rm -rf"
 alias cat="batcat"
 alias fd="fdfind"
 alias tree="exa --tree"
@@ -63,8 +64,8 @@ alias md="mkdir -p"
 alias tl="tldr"
 alias gc="git add . && git commit && git push"
 alias gs="git status"
-alias f="sk --preview 'bat --color=always --style numbers,changes {}'"
 alias gap="git add . && git commit && git push"
+alias f="sk --preview 'bat --color=always --style numbers,changes {}'"
 
 ## Apt
 alias apt="sudo apt"
