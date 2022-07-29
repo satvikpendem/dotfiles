@@ -3,5 +3,5 @@ add_newline = false
 format = "[🪟 Windows](bold fg:#009ee8) $all"
 
 [directory]
-truncation_length = 100
+truncation_length = 0
 truncate_to_repo = false
