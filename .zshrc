@@ -49,12 +49,17 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 export DENO_INSTALL="/home/satvik/.deno"
 export PATH="$DENO_INSTALL/bin:$PATH"
 
+# Python (pyenv)
+export PYENV_ROOT="$HOME/.pyenv"
+command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
+
 # Default editor for git and others
 export EDITOR=vim
 
 # Aliases
 alias vim="nvim"
-alias ls="exa -la --git --icons"
+alias ls="exa -la --git --icons -la"
 alias l="ls"
 alias rm="rm -rf"
 alias cat="batcat"
