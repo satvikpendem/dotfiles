@@ -19,6 +19,18 @@ BOLD_ERROR=$(
     tput setaf 1
 )
 
+function operational {
+    echo -e "${BOLD_OPERATIONAL}$1${RESET}"
+}
+
+function warning {
+    echo -e "${BOLD_WARNING}$1${RESET}"
+}
+
+function error {
+    echo -e "${BOLD_ERROR}$1${RESET}"
+}
+
 common_packages="git vim zsh curl wget htop ripgrep"
 apt_packages="build-essential cmake batcat"
 brew_packages="bat curl exa fd fnm git httpie mold neovim ripgrep tealdeer vim wget xh zoxide"
@@ -31,6 +43,8 @@ echo -e $BOLD_OPERATIONAL "###                                ###"
 echo -e $BOLD_OPERATIONAL "###      PACKAGE INSTALLATION      ###"
 echo -e $BOLD_OPERATIONAL "###                                ###"
 echo -e $BOLD_OPERATIONAL "######################################"
+
+operational "test"
 
 echo -e $BOLD_OPERATIONAL "- Setting up installer..."
 if [ "$(uname)" == "Linux" ]; then
