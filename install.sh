@@ -38,41 +38,39 @@ brew_cask_packages="alt-tab appcleaner chrome-remote-desktop-host cloudflare-war
 
 installer="UNKNOWN"
 
-echo -e $BOLD_OPERATIONAL "######################################"
-echo -e $BOLD_OPERATIONAL "###                                ###"
-echo -e $BOLD_OPERATIONAL "###      PACKAGE INSTALLATION      ###"
-echo -e $BOLD_OPERATIONAL "###                                ###"
-echo -e $BOLD_OPERATIONAL "######################################"
+operational "######################################"
+operational "###                                ###"
+operational "###      PACKAGE INSTALLATION      ###"
+operational "###                                ###"
+operational "######################################"
 
-operational "test"
-
-echo -e $BOLD_OPERATIONAL "- Setting up installer..."
+operational "- Setting up installer..."
 if [ "$(uname)" == "Linux" ]; then
     installer="sudo apt"
-    echo -e $BOLD_OPERATIONAL "- OS is Linux"
-    echo -e $BOLD_OPERATIONAL "- Installing common packages..."
+    operational "- OS is Linux"
+    operational "- Installing common packages..."
     $installer install $common_packages
 elif [ "$(uname)" == "Darwin" ]; then
-    echo -e $BOLD_OPERATIONAL "- OS is macOS"
+    operational "- OS is macOS"
     # Install `brew` (brew.sh) if not installed
     if [ ! -f /opt/homebrew/bin/brew ]; then
-        echo -e $BOLD_OPERATIONAL "- Installing Homebrew..."
+        operational "- Installing Homebrew..."
         # Set as non-interactive to avoid prompts
         NONINTERACTIVE=1 sudo /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     else
-        echo -e $BOLD_WARNING "- brew is already installed"
+        warning "- brew is already installed"
     fi
     installer="brew"
-    echo -e $BOLD_OPERATIONAL "- Installing common packages..."
+    operational "- Installing common packages..."
     $installer install -q $common_packages
 fi
 
 if [ $installer == "UNKNOWN" ]; then
-    echo -e $BOLD_ERROR "- Unknown OS, must be Linux or MacOS, exiting..."
+    error "- Unknown OS, must be Linux or MacOS, exiting..."
     exit 1
 fi
 
-echo -e $BOLD_OPERATIONAL "- Installing $installer packages..."
+operational "- Installing $installer packages..."
 if [ "$(uname)" == "Linux" ]; then
     $installer update -y
     $installer upgrade -y
@@ -85,11 +83,11 @@ elif [ "$(uname)" == "Darwin" ]; then
     $installer install -q $brew_packages
 fi
 
-echo -e $BOLD_OPERATIONAL "- Finished installing $installer packages"
+operational "- Finished installing $installer packages"
 echo -e "\n"
 
-echo -e $BOLD_OPERATIONAL "######################################"
-echo -e $BOLD_OPERATIONAL "###                                ###"
-echo -e $BOLD_OPERATIONAL "###        SYMBOLIC LINKING        ###"
-echo -e $BOLD_OPERATIONAL "###                                ###"
-echo -e $BOLD_OPERATIONAL "######################################"
+operational "######################################"
+operational "###                                ###"
+operational "###        SYMBOLIC LINKING        ###"
+operational "###                                ###"
+operational "######################################"
