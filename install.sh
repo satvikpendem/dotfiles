@@ -42,7 +42,7 @@ apt_packages="batcat build-essential clang cmake fd-find llvm"
 brew_packages="bat curl deno fd llvm neovim vim wget zld"
 brew_cask_packages="alt-tab appcleaner chrome-remote-desktop-host cloudflare-warp firefox flutter github google-chrome iterm2 linear-linear lunar macs-fan-control messenger moonlight mpv neovide nightfall nordvpn parsec qbittorrent rectangle slack stats visual-studio-code zoom"
 
-cargo_packages="cargo-audit cargo-cranky cargo-do cargo-edit cargo-tarpaulin cargo-watch fnm hyperfine git-delta tealdeer"
+cargo_packages="cargo-audit cargo-cranky cargo-do cargo-edit cargo-tarpaulin cargo-watch fnm hyperfine git-delta skim tealdeer"
 
 installer="UNKNOWN"
 
@@ -57,7 +57,10 @@ if [ "$(uname)" == "Linux" ]; then
     installer="sudo apt"
     operational "- OS is Linux"
     operational "- Installing common packages..."
-    $installer install $common_packages
+    for package in $common_packages; do
+        operational "\t- Installing $package..."
+        $installer install -y $package
+    done
 elif [ "$(uname)" == "Darwin" ]; then
     operational "- OS is macOS"
     # Install `brew` (brew.sh) if not installed
@@ -68,9 +71,13 @@ elif [ "$(uname)" == "Darwin" ]; then
     else
         warning "- brew is already installed"
     fi
+
     installer="brew"
     operational "- Installing common packages..."
-    $installer install -q $common_packages
+    for package in $common_packages; do
+        operational "\t- Installing $package..."
+        $installer install -q $package
+    done
 fi
 
 if [ $installer == "UNKNOWN" ]; then
@@ -82,23 +89,35 @@ operational "- Installing $installer packages..."
 if [ "$(uname)" == "Linux" ]; then
     $installer update -y
     $installer upgrade -y
-    $installer install -y $apt_packages
+    for package in $apt_packages; do
+        operational "\t- Installing $package..."
+        $installer install -y $package
+    done
     $installer autoremove -y --purge
     $installer -y clean
 elif [ "$(uname)" == "Darwin" ]; then
     # Add tap for zld, a linker for Rust on macOS
-    $installer tap michaeleisel/homebrew-zld
+    $installer tap -q michaeleisel/homebrew-zld >/dev/null 2>&1
 
-    $installer update -q
-    $installer upgrade -q
-    $installer install -q $brew_packages
+    $installer update -q >/dev/null 2>&1
+    $installer upgrade -q >/dev/null 2>&1
+    for package in $brew_packages; do
+        operational "\t- Installing $package..."
+        $installer install -q $package >/dev/null 2>&1
+    done
+
+    operational "- Installing $installer cask packages..."
+    for package in $brew_cask_packages; do
+        operational "\t- Installing $package..."
+        $installer install --cask -q $package >/dev/null 2>&1
+    done
 fi
 
 if [ "$(uname)" == "Linux" ]; then
     operational "- Installing neovim on Ubuntu..."
     sudo add-apt-repository ppa:neovim-ppa/stable
-    sudo apt update -y
-    sudo apt install -y neovim
+    $installer update -y
+    $installer install -y neovim
 fi
 
 operational "- Finished installing $installer packages"
@@ -110,6 +129,8 @@ operational "###     PROGRAMMING LANGUAGES      ###"
 operational "###                                ###"
 operational "######################################"
 
+# Install mold linker
+# On macOS, this is already installed through Homebrew
 if [ "$(uname)" == "Linux" ]; then
     operational "- Installing mold linker on Linux..."
     # mold linker
@@ -128,6 +149,7 @@ source "$HOME/.cargo/env"
 
 operational "\t- Installing preliminary cargo packages..."
 # Cargo config is dependent on sccache
+operational "\t\t- Installing sccache..."
 cargo install -q sccache
 
 operational "\t- Linking cargo config..."
@@ -136,7 +158,10 @@ ln -Fs $HOME/dotfiles/rust/config.toml ~/.cargo/config.toml
 operational "\t- Installing cargo packages..."
 # Install cargo-binstall first so as to not need to compile cargo packages but instead use binaries
 cargo install -q cargo-binstall
-cargo_binstall $cargo_packages
+for package in $cargo_packages; do
+    operational "\t\t- Installing $package..."
+    cargo_binstall $package
+done
 
 operational "- Installing Python..."
 curl -s https://pyenv.run | bash >/dev/null 2>&1
@@ -170,5 +195,10 @@ ln -Fs $HOME/dotfiles/nvim $HOME/.config/nvim
 operational "- Linking git..."
 ln -Fs $HOME/dotfiles/git/.gitconfig $HOME/.gitconfig
 
-# operational "- Sourcing zsh..."
-# source $HOME/.zshrc
+echo -e "\n"
+
+operational "######################################"
+operational "###                                ###"
+operational "###           FINISHED!            ###"
+operational "###                                ###"
+operational "######################################"

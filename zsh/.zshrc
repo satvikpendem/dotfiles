@@ -73,15 +73,26 @@ alias gc="git add . && git commit && git push"
 alias gs="git status"
 alias gap="git add . && git commit && git push"
 alias f="sk --preview 'bat --color=always --style numbers,changes {}'"
+alias ff='cd $(fd -H --type d | sk)' # Use fzf/skim to fuzzy search cd into directories
 
-## Apt
-alias apt="sudo apt"
-alias au="apt update -y"
-alias ai="au && apt install -y"
-alias aug="au && apt upgrade -y"
-alias ar="apt remove -y"
-alias ac="apt autoclean -y"
-alias aar="apt autoremove -y"
+if [[ "$(uname)" == "Linux" ]]; then
+    ## Apt
+    alias apt="sudo apt"
+    alias au="apt update -y"
+    alias ai="au && apt install -y"
+    alias aug="au && apt upgrade -y"
+    alias ar="apt remove -y"
+    alias ac="apt autoclean -y"
+    alias aar="apt autoremove -y"
+elif [[ "$(uname)" == "Darwin" ]]; then
+    alias bi="brew install"
+    alias bu="brew uninstall"
+    alias bug="brew update && brew upgrade"
+    alias bs="brew search"
+    alias bt="brew tap"
+    alias bta="brew tap --list"
+    alias btl="brew untap"
+fi
 
 ## Cargo
 alias cb="cargo binstall --no-confirm"
@@ -94,9 +105,6 @@ alias vv="vim ~/.vimrc"
 # zsh cd case insensitive
 zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*'
 autoload -Uz compinit && compinit
-
-# Use fzf/skim to fuzzy search cd into directories
-alias f='cd $(fd -H --type d | sk)'
 
 # zsh-autosuggestions (https://github.com/zsh-users/zsh-autosuggestions)
 source $HOME/dotfiles/zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
