@@ -100,10 +100,10 @@ alias f='cd $(fd -H --type d | sk)'
 
 # zsh-autosuggestions (https://github.com/zsh-users/zsh-autosuggestions)
 source $HOME/dotfiles/zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
-source $HOME/dotfiles/zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # history-substring-search
 source $HOME/dotfiles/zsh/zsh-history-substring-search/zsh-history-substring-search.zsh
+source $HOME/dotfiles/zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 bindkey "$terminfo[kcuu1]" history-substring-search-up
 bindkey "$terminfo[kcud1]" history-substring-search-down
 HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='bg=green,fg=white,bold'

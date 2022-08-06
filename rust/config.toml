@@ -3,12 +3,14 @@ linker = "clang"
 rustflags = ["-C", "link-arg=-fuse-ld=/usr/local/bin/mold"]
 
 [target.aarch64-apple-darwin]
-# mold linker
-linker = "/usr/bin/clang"
-rustflags = ["-C", "link-arg=-fuse-ld=/opt/homebrew/bin/ld64.mold"]
+# zld linker for macOS
+rustflags = ["-C", "link-arg=-fuse-ld=/opt/homebrew/bin/zld"]
+# mold linker, still experimental for macOS
+# linker = "/usr/bin/clang"
+# rustflags = ["-C", "link-arg=-fuse-ld=/opt/homebrew/bin/ld64.mold"]
 
 [build]
-rustc-wrapper = "~/.cargo/bin/sccache"
+rustc-wrapper = ".cargo/bin/sccache"
 
 [profile.release]
 strip = true

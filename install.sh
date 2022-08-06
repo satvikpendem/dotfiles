@@ -32,17 +32,17 @@ function error {
 }
 
 function cargo_binstall {
-    cargo binstall --no-confirm $1
+    cargo binstall --no-confirm $1 >/dev/null 2>&1
 }
 
 common_packages="curl exa git htop httpie neovim nim ripgrep vim wget xh zoxide zsh"
 
 apt_packages="batcat build-essential clang cmake fd-find llvm"
 
-brew_packages="bat curl deno fd neovim vim wget llvm"
-brew_cask_packages="alt-tab appcleaner chrome-remote-desktop-host cloudflare-warp firefox flutter github google-chrome iterm2 linear-linear lunar macs-fan-control messenger moonlight mpv nightfall nordvpn parsec qbittorrent rectangle slack stats visual-studio-code zoom"
+brew_packages="bat curl deno fd llvm neovim vim wget zld"
+brew_cask_packages="alt-tab appcleaner chrome-remote-desktop-host cloudflare-warp firefox flutter github google-chrome iterm2 linear-linear lunar macs-fan-control messenger moonlight mpv neovide nightfall nordvpn parsec qbittorrent rectangle slack stats visual-studio-code zoom"
 
-cargo_packages="cargo-audit cargo-cranky cargo-do cargo-edit cargo-tarpaulin cargo-watch fnm git-delta neovide tealdeer"
+cargo_packages="cargo-audit cargo-cranky cargo-do cargo-edit cargo-tarpaulin cargo-watch fnm hyperfine git-delta tealdeer"
 
 installer="UNKNOWN"
 
@@ -86,8 +86,11 @@ if [ "$(uname)" == "Linux" ]; then
     $installer autoremove -y --purge
     $installer -y clean
 elif [ "$(uname)" == "Darwin" ]; then
-    $installer update
-    $installer upgrade
+    # Add tap for zld, a linker for Rust on macOS
+    $installer tap michaeleisel/homebrew-zld
+
+    $installer update -q
+    $installer upgrade -q
     $installer install -q $brew_packages
 fi
 
@@ -107,6 +110,18 @@ operational "###     PROGRAMMING LANGUAGES      ###"
 operational "###                                ###"
 operational "######################################"
 
+if [ "$(uname)" == "Linux" ]; then
+    operational "- Installing mold linker on Linux..."
+    # mold linker
+    git clone https://github.com/rui314/mold.git $HOME/mold
+    cd $HOME/mold
+    git checkout v1.4.0 # latest stable release
+    make -s -j$(nproc) CXX=clang++
+    sudo make -s install
+    cd $HOME
+    rm -rf $HOME/mold
+fi
+
 operational "- Installing Rust..."
 curl https://sh.rustup.rs -sSf | sh -s -- -y >/dev/null 2>&1
 source "$HOME/.cargo/env"
@@ -122,20 +137,6 @@ operational "\t- Installing cargo packages..."
 # Install cargo-binstall first so as to not need to compile cargo packages but instead use binaries
 cargo install -q cargo-binstall
 cargo_binstall $cargo_packages
-
-operational "\t- Installing mold linker..."
-# mold linker
-git clone https://github.com/rui314/mold.git $HOME/mold
-cd $HOME/mold
-git checkout v1.4.0 # latest stable release
-if [ "$(uname)" == "Linux" ]; then
-    make -s -j$(nproc) CXX=clang++
-elif [ "$(uname)" == "Darwin" ]; then
-    make -s -j$(sysctl -n hw.logicalcpu) CXX=clang++
-fi
-sudo make -s install
-cd $HOME
-rm -rf $HOME/mold
 
 operational "- Installing Python..."
 curl -s https://pyenv.run | bash >/dev/null 2>&1
@@ -169,5 +170,5 @@ ln -Fs $HOME/dotfiles/nvim $HOME/.config/nvim
 operational "- Linking git..."
 ln -Fs $HOME/dotfiles/git/.gitconfig $HOME/.gitconfig
 
-operational "- Sourcing zsh..."
-source $HOME/.zshrc
+# operational "- Sourcing zsh..."
+# source $HOME/.zshrc
