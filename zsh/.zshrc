@@ -99,11 +99,11 @@ autoload -Uz compinit && compinit
 alias f='cd $(fd -H --type d | sk)'
 
 # zsh-autosuggestions (https://github.com/zsh-users/zsh-autosuggestions)
-source /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-source ~/dotfiles/zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source $HOME/dotfiles/zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
+source $HOME/dotfiles/zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # history-substring-search
-source ~/dotfiles/zsh/zsh-history-substring-search/zsh-history-substring-search.zsh
+source $HOME/dotfiles/zsh/zsh-history-substring-search/zsh-history-substring-search.zsh
 bindkey "$terminfo[kcuu1]" history-substring-search-up
 bindkey "$terminfo[kcud1]" history-substring-search-down
 HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='bg=green,fg=white,bold'

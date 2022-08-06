@@ -42,7 +42,7 @@ apt_packages="batcat build-essential clang cmake fd-find llvm"
 brew_packages="bat curl deno fd neovim vim wget llvm"
 brew_cask_packages="alt-tab appcleaner chrome-remote-desktop-host cloudflare-warp firefox flutter github google-chrome iterm2 linear-linear lunar macs-fan-control messenger moonlight mpv nightfall nordvpn parsec qbittorrent rectangle slack stats visual-studio-code zoom"
 
-cargo_packages="cargo-audit cargo-cranky cargo-do cargo-edit cargo-tarpaulin cargo-watch fnm git-delta neovide sccache tealdeer"
+cargo_packages="cargo-audit cargo-cranky cargo-do cargo-edit cargo-tarpaulin cargo-watch fnm git-delta neovide tealdeer"
 
 installer="UNKNOWN"
 
@@ -108,7 +108,12 @@ operational "###                                ###"
 operational "######################################"
 
 operational "- Installing Rust..."
-curl https://sh.rustup.rs -sSf | sh -s -- -y
+curl https://sh.rustup.rs -sSf | sh -s -- -y >/dev/null 2>&1
+source "$HOME/.cargo/env"
+
+operational "\t- Installing preliminary cargo packages..."
+# Cargo config is dependent on sccache
+cargo install -q sccache
 
 operational "\t- Linking cargo config..."
 ln -Fs $HOME/dotfiles/rust/config.toml ~/.cargo/config.toml
@@ -120,19 +125,24 @@ cargo_binstall $cargo_packages
 
 operational "\t- Installing mold linker..."
 # mold linker
-git clone https://github.com/rui314/mold.git
-cd mold
-make -s -j$(nproc) CXX=clang++
+git clone https://github.com/rui314/mold.git $HOME/mold
+cd $HOME/mold
+git checkout v1.4.0 # latest stable release
+if [ "$(uname)" == "Linux" ]; then
+    make -s -j$(nproc) CXX=clang++
+elif [ "$(uname)" == "Darwin" ]; then
+    make -s -j$(sysctl -n hw.logicalcpu) CXX=clang++
+fi
 sudo make -s install
-cd ..
-rm -rf mold
+cd $HOME
+rm -rf $HOME/mold
 
 operational "- Installing Python..."
-curl -s https://pyenv.run | bash -- >/dev/null 2>&1
+curl -s https://pyenv.run | bash >/dev/null 2>&1
 
 if [ "$(uname)" == "Linux" ]; then
     operational "- Installing Deno..."
-    curl -fsSL https://deno.land/x/install/install.sh | sh -- >/dev/null 2>&1
+    curl -fsSL https://deno.land/x/install/install.sh | sh
 fi
 
 operational "- Finished installing programming languages"
@@ -145,7 +155,7 @@ operational "###                                ###"
 operational "######################################"
 
 operational "- Linking zsh..."
-ln -Fs $HOME/dotfiles/zsh/.zshrc $HOME/.zsh
+ln -Fs $HOME/dotfiles/zsh/.zshrc $HOME/.zshrc
 ln -Fs $HOME/dotfiles/zsh/.zsh_history $HOME/.zsh_history
 
 operational "- Linking vim..."
@@ -158,3 +168,6 @@ ln -Fs $HOME/dotfiles/nvim $HOME/.config/nvim
 
 operational "- Linking git..."
 ln -Fs $HOME/dotfiles/git/.gitconfig $HOME/.gitconfig
+
+operational "- Sourcing zsh..."
+source $HOME/.zshrc
