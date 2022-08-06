@@ -1,3 +1,8 @@
+if [[ "$(uname)" == "Darwin" ]]; then
+    # Homebrew
+    export PATH="/opt/homebrew/opt/curl/bin:$PATH"
+fi
+
 # Rust
 export PATH=/home/satvik/.cargo/bin:$PATH
 export CARGO_TARGET_DIR=$HOME/.cargo/cache
@@ -69,7 +74,7 @@ alias f="sk --preview 'bat --color=always --style numbers,changes {}'"
 alias apt="sudo apt"
 alias au="apt update -y"
 alias ai="au && apt install -y"
-alias aug="au && apt upgrade -y" 
+alias aug="au && apt upgrade -y"
 alias ar="apt remove -y"
 alias ac="apt autoclean -y"
 alias aar="apt autoremove -y"
