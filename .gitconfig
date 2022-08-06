@@ -1,6 +1,6 @@
 [user]
-	email = satvik.pendem@gmail.com
-	name = Satvik Pendem
+    email = satvik.pendem@gmail.com
+    name = Satvik Pendem
 
 [core]
     pager = delta
@@ -18,5 +18,6 @@
 
 [diff]
     colorMoved = default
+
 [init]
-	defaultBranch = main
+    defaultBranch = main
