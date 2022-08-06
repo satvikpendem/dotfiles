@@ -38,13 +38,6 @@ export PATH=/home/satvik/.nimble/bin:$PATH
 export PATH=/home/satvik/.fnm:$PATH
 eval "$(fnm env --use-on-cd)"
 
-# bun completions
-[ -s "/home/satvik/.bun/_bun" ] && source "/home/satvik/.bun/_bun"
-
-# Bun
-export BUN_INSTALL="/home/satvik/.bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
-
 # Deno
 export DENO_INSTALL="/home/satvik/.deno"
 export PATH="$DENO_INSTALL/bin:$PATH"
