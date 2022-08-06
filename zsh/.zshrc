@@ -4,11 +4,11 @@ if [[ "$(uname)" == "Darwin" ]]; then
 fi
 
 # Rust
-export PATH=/home/satvik/.cargo/bin:$PATH
+export PATH=$HOME/.cargo/bin:$PATH
 export CARGO_TARGET_DIR=$HOME/.cargo/cache
 
 # Starship.rs
-export STARSHIP_CONFIG=~/dotfiles/starship-unix.toml
+export STARSHIP_CONFIG=~/dotfiles/starship/starship-unix.toml
 eval "$(starship init zsh)"
 
 # Bind ctrl+key actions
@@ -37,18 +37,18 @@ export HISTTIMEFORMAT="[%F %T] "
 eval "$(zoxide init zsh)"
 
 # Nim
-export PATH=/home/satvik/.nimble/bin:$PATH
+export PATH=$HOME/.nimble/bin:$PATH
 
 # fnm
-export PATH=/home/satvik/.fnm:$PATH
+export PATH=$HOME/.fnm:$PATH
 eval "$(fnm env --use-on-cd)"
 
 # Deno
-export DENO_INSTALL="/home/satvik/.deno"
+export DENO_INSTALL=$HOME/.deno
 export PATH="$DENO_INSTALL/bin:$PATH"
 
 # Python (pyenv)
-export PYENV_ROOT="$HOME/.pyenv"
+export PYENV_ROOT=$HOME/.pyenv
 command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
 
@@ -60,8 +60,12 @@ alias vim="nvim"
 alias ls="exa -la --git --icons -la"
 alias l="ls"
 alias rm="rm -rf"
-alias cat="batcat"
-alias fd="fdfind"
+if [[ "$(uname)" == "Linux" ]]; then
+    alias cat="batcat"
+    alias fd="fdfind"
+elif [[ "$(uname)" == "Darwin" ]]; then
+    alias cat="bat"
+fi
 alias tree="exa --tree"
 alias md="mkdir -p"
 alias tl="tldr"
