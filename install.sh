@@ -59,6 +59,7 @@ if [ "$(uname)" == "Linux" ]; then
     operational "- Installing common packages..."
     $installer update -y -qq
     $installer upgrade -y -qq
+    $installer dist-upgrade -y -qq
     for package in $common_packages; do
         operational "\t- Installing $package..."
         $installer install -qq $package > /dev/null
