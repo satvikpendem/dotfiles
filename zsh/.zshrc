@@ -61,8 +61,14 @@ alias ls="exa -la --git --icons -la"
 alias l="ls"
 alias rm="rm -rf"
 if [[ "$(uname)" == "Linux" ]]; then
+  # If we find the commands below, that means they were installed
+  # via `cargo` and not `apt`
+  if ! [ -x "$(command -v bat)" ]; then
     alias cat="batcat"
+  fi
+  if ! [ -x "$(command -v fd)" ]; then
     alias fd="fdfind"
+  fi
 elif [[ "$(uname)" == "Darwin" ]]; then
     alias cat="bat"
 fi
