@@ -31,7 +31,7 @@ function error {
 }
 
 function cargo_binstall {
-    cargo binstall --no-confirm $1
+    cargo binstall --no-confirm --log-level=error $1
 }
 
 common_packages="curl exa git htop httpie nim ripgrep unzip vim wget xh zoxide zsh"
