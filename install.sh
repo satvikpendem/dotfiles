@@ -138,6 +138,8 @@ if [ "$(uname)" == "Linux" ]; then
     git checkout v1.4.0 # latest stable release
     make -s -j$(nproc) CXX=clang++
     sudo make -s install
+    cd $HOME
+    rm -rf $HOME/mold
 fi
 
 cd $HOME
