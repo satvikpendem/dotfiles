@@ -1,7 +1,6 @@
 #!/bin/bash
 
 # Color output with tput
-
 BOLD=$(tput bold)
 OPERATIONAL=$(tput setaf 2)
 WARNING=$(tput setaf 3)
@@ -196,6 +195,18 @@ operational "- Linking git..."
 ln -Fs $HOME/dotfiles/git/.gitconfig $HOME/.gitconfig
 
 echo -e "\n"
+
+operational "######################################"
+operational "###                                ###"
+operational "###         MISCELLANEOUS          ###"
+operational "###                                ###"
+operational "######################################"
+
+operational "- Hushing login prompts..."
+touch $HOME/.hushlogin
+
+operational "- Changing shell to zsh"
+chsh -s $(which zsh)
 
 operational "######################################"
 operational "###                                ###"
