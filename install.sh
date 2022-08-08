@@ -80,7 +80,7 @@ elif [ "$(uname)" == "Darwin" ]; then
     done
 fi
 
-if [ $installer == "UNKNOWN" ]; then
+if [ "$installer" == "UNKNOWN" ]; then
     error "- Unknown OS, must be Linux or MacOS, exiting..."
     exit 1
 fi
