@@ -1,8 +1,19 @@
 # Dotfiles
 
-1. Create a [Person Access Token in your GitHub account](https://github.com/settings/tokens/new). If you can't access this link, try the [instructions](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token).
+1. Update your OS _(optional)_.
 
-2. In your `$HOME` directory, do the following. This clones the `.ssh` folder, fixes its permissions (`chmod`) and clones `dotfiles`.
+Ubuntu:
+
+```sh
+sudo apt update -y
+sudo apt upgrade -y
+sudo sed -i 's/Prompt=lts/Prompt=normal/g' /etc/update-manager/release-upgrades
+sudo do-release-upgrade
+```
+
+2. Create a [Person Access Token in your GitHub account](https://github.com/settings/tokens/new). If you can't access this link, try the [instructions](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token).
+
+3. In your `$HOME` directory, do the following. This clones the `.ssh` folder, fixes its permissions (`chmod`) and clones `dotfiles`.
 
 ```sh
 git clone https://github.com/satvikpendem/.ssh.git
