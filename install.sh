@@ -59,7 +59,7 @@ if [ "$(uname)" == "Linux" ]; then
     operational "- Installing common packages..."
     for package in $common_packages; do
         operational "\t- Installing $package..."
-        $installer install -qq $package
+        $installer install -qq $package > /dev/null
     done
 elif [ "$(uname)" == "Darwin" ]; then
     operational "- OS is macOS"
