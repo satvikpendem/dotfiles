@@ -1,4 +1,4 @@
-vim.cmd('source ~/.vimrc')
+vim.cmd('source $HOME/.vimrc')
 
 require "user.plugins"
 

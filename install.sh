@@ -190,7 +190,7 @@ ln -fs $HOME/dotfiles/zsh/.zsh_history $HOME/.zsh_history
 
 operational "- Linking vim..."
 ln -fs $HOME/dotfiles/vimfiles $HOME/vimfiles
-ln -fs $HOME/dotfiles/vimfiles/vimrc $HOME/.vimrc
+ln -fs $HOME/dotfiles/vimfiles/.vimrc $HOME/.vimrc
 
 operational "- Linking neovim..."
 mkdir -p $HOME/.config
