@@ -34,14 +34,14 @@ function cargo_binstall {
     cargo binstall --no-confirm --log-level=error $1
 }
 
-common_packages="curl exa git htop httpie nim ripgrep unzip vim wget zoxide zsh"
+common_packages="curl git htop httpie nim ripgrep unzip vim wget zsh"
 
-apt_packages="batcat build-essential clang cmake fd-find llvm libc++-dev libstdc++-10-dev libssl-dev pkg-config zlib1g zlib1g-dev"
+apt_packages="build-essential clang cmake fd-find llvm libc++-dev libstdc++-10-dev libssl-dev pkg-config zlib1g zlib1g-dev"
 
-brew_packages="bat curl deno fd llvm neovim vim wget xh zld"
+brew_packages="bat curl deno exa fd llvm neovim vim wget xh zoxide zld"
 brew_cask_packages="alt-tab appcleaner chrome-remote-desktop-host cloudflare-warp firefox flutter github google-chrome iterm2 linear-linear lunar macs-fan-control messenger moonlight mpv neovide nightfall nordvpn parsec qbittorrent rectangle slack stats visual-studio-code zoom"
 
-cargo_packages="cargo-audit cargo-cranky cargo-do cargo-edit cargo-tarpaulin cargo-watch fnm hyperfine git-delta skim starship tealdeer xh"
+cargo_packages="bat cargo-audit cargo-cranky cargo-do cargo-edit cargo-tarpaulin cargo-watch exa fnm hyperfine git-delta skim starship tealdeer xh zoxide"
 
 installer="UNKNOWN"
 
