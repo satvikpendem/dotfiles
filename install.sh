@@ -31,10 +31,10 @@ function error {
 }
 
 function cargo_binstall {
-    cargo binstall --no-confirm $1 >/dev/null 2>&1
+    cargo binstall --no-confirm $1
 }
 
-common_packages="curl exa git htop httpie neovim nim ripgrep vim wget xh zoxide zsh"
+common_packages="curl exa git htop httpie nim ripgrep vim wget xh zoxide zsh"
 
 apt_packages="batcat build-essential clang cmake fd-find llvm pkg-config"
 
@@ -96,25 +96,25 @@ if [ "$(uname)" == "Linux" ]; then
     $installer -y clean
 elif [ "$(uname)" == "Darwin" ]; then
     # Add tap for zld, a linker for Rust on macOS
-    $installer tap -q michaeleisel/homebrew-zld >/dev/null 2>&1
+    $installer tap -q michaeleisel/homebrew-zld
 
-    $installer update -q >/dev/null 2>&1
-    $installer upgrade -q >/dev/null 2>&1
+    $installer update -q
+    $installer upgrade -q
     for package in $brew_packages; do
         operational "\t- Installing $package..."
-        $installer install -q $package >/dev/null 2>&1
+        $installer install -q $package
     done
 
     operational "- Installing $installer cask packages..."
     for package in $brew_cask_packages; do
         operational "\t- Installing $package..."
-        $installer install --cask -q $package >/dev/null 2>&1
+        $installer install --cask -q $package
     done
 fi
 
 if [ "$(uname)" == "Linux" ]; then
     operational "- Installing neovim on Ubuntu..."
-    sudo add-apt-repository ppa:neovim-ppa/stable
+    sudo add-apt-repository ppa:neovim-ppa/stable -y
     $installer update -y
     $installer install -y neovim
 fi
@@ -138,12 +138,12 @@ if [ "$(uname)" == "Linux" ]; then
     git checkout v1.4.0 # latest stable release
     make -s -j$(nproc) CXX=clang++
     sudo make -s install
-    cd $HOME
-    rm -rf $HOME/mold
 fi
 
+cd $HOME
+
 operational "- Installing Rust..."
-curl https://sh.rustup.rs -sSf | sh -s -- -y >/dev/null 2>&1
+curl https://sh.rustup.rs -sSf | sh -s -- -y
 source "$HOME/.cargo/env"
 
 operational "\t- Installing preliminary cargo packages..."
@@ -163,7 +163,7 @@ for package in $cargo_packages; do
 done
 
 operational "- Installing Python..."
-curl -s https://pyenv.run | bash >/dev/null 2>&1
+curl -s https://pyenv.run | bash
 
 if [ "$(uname)" == "Linux" ]; then
     operational "- Installing Deno..."
