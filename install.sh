@@ -152,7 +152,7 @@ operational "\t\t- Installing sccache..."
 cargo install -q sccache
 
 operational "\t- Linking cargo config..."
-ln -Fs $HOME/dotfiles/rust/config.toml ~/.cargo/config.toml
+ln -fs $HOME/dotfiles/rust/config.toml $HOME/.cargo/config.toml
 
 operational "\t- Installing cargo packages..."
 # Install cargo-binstall first so as to not need to compile cargo packages but instead use binaries
@@ -180,19 +180,19 @@ operational "###                                ###"
 operational "######################################"
 
 operational "- Linking zsh..."
-ln -Fs $HOME/dotfiles/zsh/.zshrc $HOME/.zshrc
-ln -Fs $HOME/dotfiles/zsh/.zsh_history $HOME/.zsh_history
+ln -fs $HOME/dotfiles/zsh/.zshrc $HOME/.zshrc
+ln -fs $HOME/dotfiles/zsh/.zsh_history $HOME/.zsh_history
 
 operational "- Linking vim..."
-ln -Fs $HOME/dotfiles/vimfiles $HOME/vimfiles
-ln -Fs $HOME/dotfiles/vimfiles/vimrc $HOME/.vimrc
+ln -fs $HOME/dotfiles/vimfiles $HOME/vimfiles
+ln -fs $HOME/dotfiles/vimfiles/vimrc $HOME/.vimrc
 
 operational "- Linking neovim..."
 mkdir -p $HOME/.config
-ln -Fs $HOME/dotfiles/nvim $HOME/.config/nvim
+ln -fs $HOME/dotfiles/nvim $HOME/.config/nvim
 
 operational "- Linking git..."
-ln -Fs $HOME/dotfiles/git/.gitconfig $HOME/.gitconfig
+ln -fs $HOME/dotfiles/git/.gitconfig $HOME/.gitconfig
 
 echo -e "\n"
 
