@@ -54,7 +54,7 @@ operational "######################################"
 operational "- Setting up installer..."
 if [ "$(uname)" == "Linux" ]; then
     # makes install quieter
-    installer="sudo DEBIAN_FRONTEND=noninteractive apt"
+    installer="sudo DEBIAN_FRONTEND=noninteractive apt-get"
     operational "- OS is Linux"
     operational "- Installing common packages..."
     for package in $common_packages; do
