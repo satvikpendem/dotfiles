@@ -53,12 +53,13 @@ operational "######################################"
 
 operational "- Setting up installer..."
 if [ "$(uname)" == "Linux" ]; then
-    installer="sudo apt"
+    # makes install quieter
+    installer="sudo apt DEBIAN_FRONTEND=noninteractive"
     operational "- OS is Linux"
     operational "- Installing common packages..."
     for package in $common_packages; do
         operational "\t- Installing $package..."
-        $installer install -y $package
+        $installer install -qq $package
     done
 elif [ "$(uname)" == "Darwin" ]; then
     operational "- OS is macOS"
