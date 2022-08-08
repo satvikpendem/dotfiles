@@ -75,9 +75,6 @@ fi
 alias tree="exa --tree"
 alias md="mkdir -p"
 alias tl="tldr"
-alias gc="git add . && git commit && git push"
-alias gs="git status"
-alias gap="git add . && git commit && git push"
 alias f="sk --preview 'bat --color=always --style numbers,changes {}'"
 alias ff='cd $(fd -H --type d | sk)' # Use fzf/skim to fuzzy search cd into directories
 
@@ -100,10 +97,18 @@ elif [[ "$(uname)" == "Darwin" ]]; then
     alias btl="brew untap"
 fi
 
+## Git
+alias gi="git init"
+alias grao="git remote add origin"
+alias gs="git status"
+alias gd="git diff"
+alias gap="git add . && git commit && git push"
+
 ## Cargo
 alias cb="cargo binstall --no-confirm"
 alias ci="cargo install"
 
+## Miscellaneous
 alias vz="vim ~/.zshrc"
 alias sz="source ~/.zshrc"
 alias vv="vim ~/.vimrc"
