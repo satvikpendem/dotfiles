@@ -115,7 +115,7 @@ fi
 
 if [ "$(uname)" == "Linux" ]; then
     operational "- Installing neovim on Ubuntu..."
-    sudo add-apt-repository ppa:neovim-ppa/stable -y
+    sudo add-apt-repository ppa:neovim-ppa/stable -qq > /dev/null
     $installer update -qq > /dev/null
     $installer install -qq neovim > /dev/null
 fi
