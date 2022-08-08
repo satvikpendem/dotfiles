@@ -36,7 +36,7 @@ function cargo_binstall {
 
 common_packages="curl exa git htop httpie nim ripgrep vim wget xh zoxide zsh"
 
-apt_packages="batcat build-essential clang cmake fd-find llvm libc++-dev libstdc++-10-dev libssl-dev pkg-config zlib1g zlib1g-dev"
+apt_packages="batcat build-essential clang cmake fd-find llvm libc++-dev libstdc++-10-dev libssl-dev pkg-config unzip zlib1g zlib1g-dev"
 
 brew_packages="bat curl deno fd llvm neovim vim wget zld"
 brew_cask_packages="alt-tab appcleaner chrome-remote-desktop-host cloudflare-warp firefox flutter github google-chrome iterm2 linear-linear lunar macs-fan-control messenger moonlight mpv neovide nightfall nordvpn parsec qbittorrent rectangle slack stats visual-studio-code zoom"
