@@ -87,14 +87,14 @@ fi
 
 operational "- Installing $installer packages..."
 if [ "$(uname)" == "Linux" ]; then
-    $installer update -y
-    $installer upgrade -y
+    $installer update -qq > /dev/null
+    $installer upgrade -qq > /dev/null
     for package in $apt_packages; do
         operational "\t- Installing $package..."
-        $installer install -y $package
+        $installer install -qq $package > /dev/null
     done
-    $installer autoremove -y --purge
-    $installer -y clean
+    $installer autoremove -qq --purge > /dev/null
+    $installer -qq clean > /dev/null
 elif [ "$(uname)" == "Darwin" ]; then
     # Add tap for zld, a linker for Rust on macOS
     $installer tap -q michaeleisel/homebrew-zld
@@ -116,8 +116,8 @@ fi
 if [ "$(uname)" == "Linux" ]; then
     operational "- Installing neovim on Ubuntu..."
     sudo add-apt-repository ppa:neovim-ppa/stable -y
-    $installer update -y
-    $installer install -y neovim
+    $installer update -qq > /dev/null
+    $installer install -qq neovim > /dev/null
 fi
 
 operational "- Finished installing $installer packages"
