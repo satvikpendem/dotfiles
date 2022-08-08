@@ -57,6 +57,8 @@ if [ "$(uname)" == "Linux" ]; then
     installer="sudo DEBIAN_FRONTEND=noninteractive apt-get"
     operational "- OS is Linux"
     operational "- Installing common packages..."
+    $installer update -y -qq
+    $installer upgrade -y -qq
     for package in $common_packages; do
         operational "\t- Installing $package..."
         $installer install -qq $package > /dev/null
