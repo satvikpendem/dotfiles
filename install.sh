@@ -41,7 +41,7 @@ apt_packages="batcat build-essential clang cmake fd-find llvm libc++-dev libstdc
 brew_packages="bat curl deno fd llvm neovim vim wget zld"
 brew_cask_packages="alt-tab appcleaner chrome-remote-desktop-host cloudflare-warp firefox flutter github google-chrome iterm2 linear-linear lunar macs-fan-control messenger moonlight mpv neovide nightfall nordvpn parsec qbittorrent rectangle slack stats visual-studio-code zoom"
 
-cargo_packages="cargo-audit cargo-cranky cargo-do cargo-edit cargo-tarpaulin cargo-watch fnm hyperfine git-delta skim tealdeer"
+cargo_packages="cargo-audit cargo-cranky cargo-do cargo-edit cargo-tarpaulin cargo-watch fnm hyperfine git-delta skim starship tealdeer"
 
 installer="UNKNOWN"
 
