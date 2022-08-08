@@ -34,14 +34,14 @@ function cargo_binstall {
     cargo binstall --no-confirm --log-level=error $1
 }
 
-common_packages="curl exa git htop httpie nim ripgrep unzip vim wget xh zoxide zsh"
+common_packages="curl exa git htop httpie nim ripgrep unzip vim wget zoxide zsh"
 
 apt_packages="batcat build-essential clang cmake fd-find llvm libc++-dev libstdc++-10-dev libssl-dev pkg-config zlib1g zlib1g-dev"
 
-brew_packages="bat curl deno fd llvm neovim vim wget zld"
+brew_packages="bat curl deno fd llvm neovim vim wget xh zld"
 brew_cask_packages="alt-tab appcleaner chrome-remote-desktop-host cloudflare-warp firefox flutter github google-chrome iterm2 linear-linear lunar macs-fan-control messenger moonlight mpv neovide nightfall nordvpn parsec qbittorrent rectangle slack stats visual-studio-code zoom"
 
-cargo_packages="cargo-audit cargo-cranky cargo-do cargo-edit cargo-tarpaulin cargo-watch fnm hyperfine git-delta skim starship tealdeer"
+cargo_packages="cargo-audit cargo-cranky cargo-do cargo-edit cargo-tarpaulin cargo-watch fnm hyperfine git-delta skim starship tealdeer xh"
 
 installer="UNKNOWN"
 
@@ -161,8 +161,10 @@ operational "\t- Installing cargo packages..."
 # Install cargo-binstall first so as to not need to compile cargo packages but instead use binaries
 cargo install -q cargo-binstall
 for package in $cargo_packages; do
-    operational "\t\t- Installing $package..."
-    cargo_binstall $package
+    if ! [ -x "$(command -v $package)" ]; then
+        operational "\t\t- Installing $package..."
+        cargo_binstall $package
+    fi
 done
 
 operational "- Installing Python..."
