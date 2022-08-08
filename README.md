@@ -8,7 +8,7 @@ Ubuntu:
 sudo apt update -y
 sudo apt upgrade -y
 sudo sed -i 's/Prompt=lts/Prompt=normal/g' /etc/update-manager/release-upgrades
-sudo do-release-upgrade
+sudo do-release-upgrade --allow-third-party
 ```
 
 2. Create a [Person Access Token in your GitHub account](https://github.com/settings/tokens/new). If you can't access this link, try the [instructions](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token).
