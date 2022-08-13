@@ -65,6 +65,8 @@ if [[ "$(uname)" == "Linux" ]]; then
   # via `cargo` and not `apt`
   if ! [ -x "$(command -v bat)" ]; then
     alias cat="batcat"
+  else
+    alias cat="bat"
   fi
   if ! [ -x "$(command -v fd)" ]; then
     alias fd="fdfind"
@@ -103,6 +105,7 @@ alias grao="git remote add origin"
 alias gs="git status"
 alias gd="git diff"
 alias gap="git add . && git commit && git push"
+alias gic="git add . && git commit -am 'Init commit' && git push"
 
 ## Cargo
 alias cb="cargo binstall --no-confirm"
