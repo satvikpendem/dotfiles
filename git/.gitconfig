@@ -5,6 +5,9 @@ name = Satvik Pendem
 [init]
 defaultBranch = main
 
+[push]
+autoSetupRemote = true
+
 [core]
 pager = delta
 
