@@ -1,0 +1,7 @@
+add_newline = false
+
+format = "[ macOS](bold fg:#a2aaad) $all"
+
+[directory]
+truncation_length = 0
+truncate_to_repo = false

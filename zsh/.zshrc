@@ -8,7 +8,11 @@ export PATH=$HOME/.cargo/bin:$PATH
 export CARGO_TARGET_DIR=$HOME/.cargo/cache
 
 # Starship.rs
-export STARSHIP_CONFIG=~/dotfiles/starship/starship-unix.toml
+if [[ "$(uname)" == "Darwin" ]]; then
+    export STARSHIP_CONFIG=~/dotfiles/starship/starship-macos.toml
+else
+  export STARSHIP_CONFIG=~/dotfiles/starship/starship-unix.toml
+fi
 eval "$(starship init zsh)"
 
 # Bind ctrl+key actions
