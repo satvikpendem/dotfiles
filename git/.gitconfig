@@ -1,29 +1,32 @@
 [user]
-email = satvik.pendem@gmail.com
-name = Satvik Pendem
+  email = satvik.pendem@gmail.com
+  name = Satvik Pendem
 
 [init]
-defaultBranch = main
+  defaultBranch = main
 
 [push]
-autoSetupRemote = true
+	default = matching
+  autoSetupRemote = true
 
 [core]
-pager = delta
+  pager = delta
 
 [interactive]
-diffFilter = delta --color-only
+  diffFilter = delta --color-only
 [add.interactive]
-useBuiltin = false
+  useBuiltin = false
 
 [delta]
-navigate = true
-line-numbers = true
-side-by-side = true
+  navigate = true
+  line-numbers = true
+  side-by-side = true
 
 [merge]
-conflictstyle = diff3
+  conflictstyle = diff3
 
 [diff]
-colorMoved = default
+  colorMoved = default
 
+[credential]
+	helper = store
