@@ -11,7 +11,7 @@ export CARGO_TARGET_DIR=$HOME/.cargo/cache
 if [[ "$(uname)" == "Darwin" ]]; then
     export STARSHIP_CONFIG=~/dotfiles/starship/starship-macos.toml
 else
-  export STARSHIP_CONFIG=~/dotfiles/starship/starship-unix.toml
+    export STARSHIP_CONFIG=~/dotfiles/starship/starship-unix.toml
 fi
 eval "$(starship init zsh)"
 
@@ -119,8 +119,11 @@ alias gi="git init"
 alias grao="git remote add origin"
 alias gs="git status"
 alias gd="git diff"
+alias ga="git add"
+alias gc="git commit"
+alias gp="git push -u"
 alias gap="git add . && git commit && git push"
-alias gic="git add . && git commit -am 'Init commit' && git push"
+alias gic="git add . && git commit -am 'Init commit' && git push -u"
 
 ## Cargo
 alias cb="cargo binstall --no-confirm"
@@ -149,5 +152,3 @@ HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS='i'
 
 # Use bat with manpages
 export MANPAGER="sh -c 'col -bx | bat -l man -p'"
-
-

@@ -6,7 +6,7 @@
   defaultBranch = main
 
 [push]
-	default = matching
+	default = simple
   autoSetupRemote = true
 
 [core]
