@@ -67,6 +67,10 @@ fi
 unset __conda_setup
 # <<< conda initialize <<<
 
+if [[ "$(uname)" == "Darwin" ]]; then
+    export PATH="/opt/homebrew/anaconda3/bin:$PATH"
+fi
+
 # Default editor for git and others
 export EDITOR=vim
 
@@ -106,12 +110,13 @@ if [[ "$(uname)" == "Linux" ]]; then
     alias aar="apt autoremove -y"
 elif [[ "$(uname)" == "Darwin" ]]; then
     alias bi="brew install"
+    alias bic="brew install --cask"
     alias bu="brew uninstall"
     alias bug="brew update && brew upgrade"
     alias bs="brew search"
     alias bt="brew tap"
-    alias bta="brew tap --list"
-    alias btl="brew untap"
+    alias btl="brew tap --list"
+    alias btu="brew untap"
 fi
 
 ## Git
