@@ -202,6 +202,9 @@ ln -fs $HOME/dotfiles/nvim $HOME/.config/nvim
 operational "- Linking git..."
 ln -fs $HOME/dotfiles/git/.gitconfig $HOME/.gitconfig
 
+operational "- Linking mpv..."
+ln -fs $HOME/dotfiles/mpv $HOME/.config/mpv
+
 echo -e "\n"
 
 operational "######################################"
