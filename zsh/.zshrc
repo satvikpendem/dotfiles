@@ -1,5 +1,6 @@
 if [[ "$(uname)" == "Darwin" ]]; then
     # Homebrew
+    # curl is keg-only so add it to the PATH
     export PATH="/opt/homebrew/opt/curl/bin:$PATH"
 fi
 
