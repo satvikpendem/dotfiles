@@ -31,22 +31,22 @@ packer.init {
 
 return require("packer").startup(function(use)
   -- Fundamental
-  use "wbthomason/packer.nvim" -- Packer can manage itself
-  use "nvim-lua/popup.nvim" -- An implementation of the Popup API from vim in Neovim
-  use "nvim-lua/plenary.nvim" -- Useful lua functions used in lots of plugins
+  -- use "wbthomason/packer.nvim" -- Packer can manage itself
+  -- use "nvim-lua/popup.nvim" -- An implementation of the Popup API from vim in Neovim
+  -- use "nvim-lua/plenary.nvim" -- Useful lua functions used in lots of plugins
 
   -- Completion
-  use { "nvim-treesitter/nvim-treesitter", run = function() require("nvim-treesitter.install").update({ with_sync = true }) end, }
-  use { "nvim-treesitter/playground" }
-  use { "neoclide/coc.nvim", branch = "release" }
+  -- use { "nvim-treesitter/nvim-treesitter", run = function() require("nvim-treesitter.install").update({ with_sync = true }) end, }
+  -- use { "nvim-treesitter/playground" }
+  -- use { "neoclide/coc.nvim", branch = "release" }
 
   -- Editing
-  use { "numToStr/Comment.nvim", config = function() require("Comment").setup() end }
-  use { "JoosepAlviste/nvim-ts-context-commentstring" }
-  use { "windwp/nvim-autopairs", config = function() require("nvim-autopairs").setup {} end }
-  use { "tpope/vim-surround" }
+  -- use { "numToStr/Comment.nvim", config = function() require("Comment").setup() end }
+  -- use { "JoosepAlviste/nvim-ts-context-commentstring" }
+  -- use { "windwp/nvim-autopairs", config = function() require("nvim-autopairs").setup {} end }
+  -- use { "tpope/vim-surround" }
 
-  use { "ms-jpq/chadtree", branch = 'chad', run = 'python3 -m chadtree deps' }
+  -- use { "ms-jpq/chadtree", branch = 'chad', run = 'python3 -m chadtree deps' }
 
   -- Automatically set up your configuration after cloning packer.nvim
   -- Put this at the end after all plugins
