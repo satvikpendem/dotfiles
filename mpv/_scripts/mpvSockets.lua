@@ -18,9 +18,9 @@ end
 tempDir = get_temp_path()
 
 function join_paths(...)
-    local arg={...}
+    local arg = { ... }
     path = ""
-    for i,v in ipairs(arg) do
+    for i, v in ipairs(arg) do
         path = utils.join_path(path, tostring(v))
     end
     return path;
@@ -31,6 +31,7 @@ os.execute("mkdir " .. join_paths(tempDir, "mpvSockets") .. " 2>/dev/null")
 mp.set_property("options/input-ipc-server", join_paths(tempDir, "mpvSockets", ppid))
 
 function shutdown_handler()
-        os.remove(join_paths(tempDir, "mpvSockets", ppid))
+    os.remove(join_paths(tempDir, "mpvSockets", ppid))
 end
+
 mp.register_event("shutdown", shutdown_handler)
