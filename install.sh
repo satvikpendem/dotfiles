@@ -139,9 +139,12 @@ if [ "$(uname)" == "Linux" ]; then
     # mold linker
     git clone https://github.com/rui314/mold.git $HOME/mold
     cd $HOME/mold
-    git checkout v1.4.0 # latest stable release
-    make -s -j$(nproc) CXX=clang++
-    sudo make -s install
+    git checkout v1.6.0 # latest stable release
+    mkdir mold/build
+    sudo ../install-build-deps.sh
+    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=c++ ..
+    cmake --build . -j $(nproc)
+    sudo cmake --install .
     cd $HOME
     rm -rf $HOME/mold
 fi
@@ -213,7 +216,7 @@ operational "######################################"
 operational "- Hushing login prompts..."
 touch $HOME/.hushlogin
 
-operational "- Changing shell to zsh"
+operational "- Changing shell to zsh..."
 chsh -s $(which zsh)
 
 operational "######################################"
