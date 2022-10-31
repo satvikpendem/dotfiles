@@ -31,3 +31,5 @@ function wu($Package) { winget uninstall $Package }
 function ws($Package) { winget search $Package }
 function brb { flutter pub run build_runner build --delete-conflicting-outputs }
 function brw { flutter pub run build_runner watch --delete-conflicting-outputs }
+function yt($Url) { yt-dlp --embed-metadata -o "%(title)s.%(ext)s" -f 'bestvideo[height<=8192]+bestaudio/best[height<=8192]' $Url }
+function ytp($Url) { yt-dlp --embed-metadata -o "%(playlist_index)04d - %(title)s.%(ext)s" -f 'bestvideo[height<=8192]+bestaudio/best[height<=8192]' }
