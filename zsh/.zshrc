@@ -78,6 +78,8 @@ export EDITOR=vim
 
 # Aliases
 alias vim="nvim"
+alias docker="podman"
+alias docker-compose="podman-compose"
 alias ls="exa -la --git --icons -la"
 alias l="ls"
 alias rm="rm -rf"
