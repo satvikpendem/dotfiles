@@ -1,16 +1,41 @@
 [target.x86_64-unknown-linux-gnu]
 linker = "clang"
-rustflags = ["-C", "link-arg=-fuse-ld=/usr/local/bin/mold"]
+rustflags = [
+    "-C",
+    "link-arg=-fuse-ld=/usr/local/bin/mold",
+    "-C",
+    "target-cpu=native",
+]
 
 [target.aarch64-apple-darwin]
 # zld linker for macOS
 # rustflags = ["-C", "link-arg=-fuse-ld=/opt/homebrew/bin/zld"]
 # mold linker, still experimental for macOS
 linker = "/usr/bin/clang"
-rustflags = ["-C", "link-arg=-fuse-ld=/opt/homebrew/bin/ld64.mold"]
+rustflags = [
+    "-C",
+    "link-arg=-fuse-ld=/usr/local/bin/mold",
+    "-C",
+    "target-cpu=native",
+]
 
 [build]
 rustc-wrapper = ".cargo/bin/sccache"
 
 [profile.release]
 strip = true
+lto = "fat"
+codegen-units = 1
+
+# # Commands for cargo-cmd
+# [package.metadata.commands]
+# test = "cargo nextest run --failure-output final"
+# clean = "./scripts/clean_database.sh newsletter"
+# run = "cargo run | bunyan"
+# run-prod = "./target/release/zero2prod | bunyan"
+# build = "cargo build --release --target-dir ../target"
+# dev = "cargo watch -x 'cmd test' -x 'cmd clean' -x 'cmd run'"
+# prod = "cargo watch -x 'cmd test' -x 'cmd clean' -x 'cmd build && cargo cmd run-prod'"
+# docker-build = "cargo watch -x 'cmd test' -x 'cmd clean' -s './scripts/build.sh'"
+# docker-dev = "cargo watch -x 'cmd test' -x 'cmd clean' -s './scripts/run.sh'"
+# docker-prod = "cargo watch -x 'cmd test' -x 'cmd clean' -s './scripts/run.sh release'"
