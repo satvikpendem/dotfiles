@@ -1,7 +1,8 @@
 if [[ "$(uname)" == "Darwin" ]]; then
     # Homebrew
-    # curl is keg-only so add it to the PATH
+    # Some packages are keg-only so add it to the PATH
     export PATH="/opt/homebrew/opt/curl/bin:$PATH"
+    export PATH="/opt/homebrew/opt/sqlite/bin:$PATH"
 fi
 
 # Rust
