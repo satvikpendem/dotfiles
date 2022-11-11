@@ -3,6 +3,7 @@ if [[ "$(uname)" == "Darwin" ]]; then
     # Some packages are keg-only so add it to the PATH
     export PATH="/opt/homebrew/opt/curl/bin:$PATH"
     export PATH="/opt/homebrew/opt/sqlite/bin:$PATH"
+    export PATH="/opt/homebrew/opt/postgresql@15/bin:$PATH"
 fi
 
 # Rust
