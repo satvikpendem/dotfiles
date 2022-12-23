@@ -38,10 +38,8 @@ function fbrw { flutter pub run build_runner watch --delete-conflicting-outputs 
 function whisper {
     param(
         [string] $File,
-        [Parameter()]
-        [ValidateSet('tiny', 'tiny.en', 'base', 'base.en', 'small', 'small.en', 'medium', 'medium.en', 'large', 'large')]
-        [string]
-        $Model = "base"
+        [Parameter()] [ValidateSet('tiny', 'tiny.en', 'base', 'base.en', 'small', 'small.en', 'medium', 'medium.en', 'large', 'large-v1', 'large-v2')] [string] $Model = "base",
+        [switch] $Cpu
     )
 
     if ($null -eq $File) {
@@ -49,39 +47,63 @@ function whisper {
         return
     }
 
+    if (-not (Test-Path $File)) {
+        Write-Error "File does not exist: $File"
+        return
+    }
+
+    if ($Cpu -and ($Model -eq "large-v1" -or $Model -eq "large-v2")) {
+        Write-Error "large-v1 and large-v2 models are not available on CPU"
+        return
+    }
+
     $video_file_extension = [System.IO.Path]::GetExtension($File)
     if ($video_file_extension -eq ".mp4") {
-        $subtitle_format = "srt"
+        $subtitle_format = ".srt"
     }
     elseif ($video_file_extension -eq ".mkv") {
-        $subtitle_format = "vtt"
+        $subtitle_format = ".vtt"
     }
     else {
         Write-Error "Unsupported video format: $video_file_extension"
         return
     }
+
     $video_file_name = "output$video_file_extension"
 
     $audio_file_name = "output.wav"
-    $audio_srt = "$audio_file_name.srt"
+    $subtitled_audio = "$audio_file_name$subtitle_format"
     $subtitle_language = "English"
 
-    $whisper_path = "C:\Program Files\whisper-bin-x64"
-    $whisper_exe = "$whisper_path\main.exe"
-    $whisper_models = "$whisper_path\models"
-    $default_model = "$whisper_models\ggml-$Model.bin"
+    if ($Cpu) {
+        $whisper_path = "C:\Program Files\whisper-bin-x64"
+        $whisper_exe = "$whisper_path\main.exe"
+        $whisper_models = "$whisper_path\models"
+        $default_model = "$whisper_models\ggml-$Model.bin"
+    }
+    else {
+        # From the official OpenAI Whisper repo:
+        # pip install git+https://github.com/openai/whisper.git
+        $whisper_exe = "whisper.bat"
+        $default_model = $Model
+    }
 
     # Convert audio from each video to 16-bit 16kHz PCM WAV as Whisper.cpp requires
     ffmpeg -i $File -ar 16000 -ac 1 -c:a pcm_s16le $audio_file_name
-    # Use Whisper.cpp to transcribe each audio file and output a .srt file        
-    & "$whisper_exe" -m $default_model --threads (Get-CimInstance Win32_ComputerSystem).NumberOfLogicalProcessors --output-$subtitle_format --print-colors $audio_file_name
+    # Use Whisper.cpp to transcribe each audio file and output a .srt file  
+    if ($Cpu) {
+        & "$whisper_exe" -m $default_model --threads (Get-CimInstance Win32_ComputerSystem).NumberOfLogicalProcessors --output-$subtitle_format --print-colors $audio_file_name
+    }
+    else {
+        # GPU
+        & "$whisper_exe" --model large-v2 --device cuda $audio_file_name
+    }      
     # Package the .srt file back into the video
-    ffmpeg -i $File -i $audio_srt -c copy -c:s mov_text -metadata:s:s:0 title=$subtitle_language $video_file_name
+    ffmpeg -i $File -i $subtitled_audio -c copy -c:s mov_text -metadata:s:s:0 title=$subtitle_language $video_file_name
     # Rename the video file to the original name. We use `-Force` to overwrite the file since the original video file is no longer needed.
     Move-Item -Force $video_file_name $File
     # Clean up files
-    Remove-Item $audio_file_name
-    Remove-Item $audio_srt
+    Remove-Item $audio_file_name*
 }
 
 # Modified from https://github.com/TheFrenchGhosty/TheFrenchGhostys-Ultimate-YouTube-DL-Scripts-Collection
