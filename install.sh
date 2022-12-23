@@ -41,7 +41,7 @@ apt_packages="build-essential clang cmake fd-find llvm libc++-dev libstdc++-10-d
 brew_packages="bat curl deno exa fd llvm neovim vim wget xh zoxide zld"
 brew_cask_packages="alt-tab appcleaner chrome-remote-desktop-host cloudflare-warp firefox flutter github google-chrome iterm2 linear-linear lunar macs-fan-control messenger moonlight mpv neovide nightfall nordvpn parsec qbittorrent rectangle slack stats visual-studio-code zoom"
 
-cargo_packages="bat bunyan cargo-audit cargo-cmd cargo-cranky cargo-do cargo-edit cargo-nextest cargo-tarpaulin cargo-watch exa fnm hyperfine git-delta skim starship tealdeer xh zoxide"
+cargo_packages="bat bunyan cargo-audit cargo-cmd cargo-cranky cargo-do cargo-edit cargo-generate cargo-nextest cargo-tarpaulin cargo-tomlfmt cargo-watch cross exa fnm hyperfine git-delta skim starship tealdeer xh zoxide"
 
 installer="UNKNOWN"
 
@@ -139,7 +139,7 @@ if [ "$(uname)" == "Linux" ]; then
     # mold linker
     git clone https://github.com/rui314/mold.git $HOME/mold
     cd $HOME/mold
-    git checkout v1.4.0 # latest stable release
+    # git checkout v1.4.0 # latest stable release
     make -s -j$(nproc) CXX=clang++
     sudo make -s install
     cd $HOME
