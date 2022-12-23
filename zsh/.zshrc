@@ -8,6 +8,7 @@ fi
 
 # Rust
 export PATH=$HOME/.cargo/bin:$PATH
+export PATH=$HOME/dotfiles/rust/scripts:$PATH
 export CARGO_TARGET_DIR=$HOME/.cargo/cache
 
 # Starship.rs
