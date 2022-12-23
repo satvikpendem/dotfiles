@@ -39,7 +39,10 @@ function whisper {
     param(
         [string] $File,
         [Parameter()] [ValidateSet('tiny', 'tiny.en', 'base', 'base.en', 'small', 'small.en', 'medium', 'medium.en', 'large', 'large-v1', 'large-v2')] [string] $Model = "base",
-        [switch] $Cpu
+        [switch] $Cpu,
+        # For generating subtitles only without packaging them into the video
+        [switch] $SubtitlesOnly,
+        [Parameter()] [ValidateSet('transcribe', 'translate')] [string] $Task = "transcribe"
     )
 
     if ($null -eq $File) {
@@ -90,14 +93,21 @@ function whisper {
 
     # Convert audio from each video to 16-bit 16kHz PCM WAV as Whisper.cpp requires
     ffmpeg -i $File -ar 16000 -ac 1 -c:a pcm_s16le $audio_file_name
+
     # Use Whisper.cpp to transcribe each audio file and output a .srt file  
     if ($Cpu) {
         & "$whisper_exe" -m $default_model --threads (Get-CimInstance Win32_ComputerSystem).NumberOfLogicalProcessors --output-$subtitle_format --print-colors $audio_file_name
     }
     else {
         # GPU
-        & "$whisper_exe" --model large-v2 --device cuda $audio_file_name
-    }      
+        & "$whisper_exe" --model large-v2 --device cuda $audio_file_name --task $Task
+    }
+
+    if ($SubtitlesOnly) {
+        Remove-Item $audio_file_name
+        return
+    }
+
     # Package the .srt file back into the video
     ffmpeg -i $File -i $subtitled_audio -c copy -c:s mov_text -metadata:s:s:0 title=$subtitle_language $video_file_name
     # Rename the video file to the original name. We use `-Force` to overwrite the file since the original video file is no longer needed.
