@@ -32,29 +32,41 @@ function wug { winget upgrade --all --silent }
 function wi($Package) { winget install $Package }
 function wu($Package) { winget uninstall $Package }
 function ws($Package) { winget search $Package }
-function brb { flutter pub run build_runner build --delete-conflicting-outputs }
-function brw { flutter pub run build_runner watch --delete-conflicting-outputs }
+function fbrb { flutter pub run build_runner build --delete-conflicting-outputs }
+function fbrw { flutter pub run build_runner watch --delete-conflicting-outputs }
 
 function whisper($File) {
-    if ($File -eq $null) {
+    if ($null -eq $File) {
         Write-Error "No file specified"
         return
     }
 
-    $audio_file_name = "output.wav"
-    $video_file_extension = ".mp4"
+    $video_file_extension = [System.IO.Path]::GetExtension($File)
+    if ($video_file_extension -eq ".mp4") {
+        $subtitle_format = "srt"
+    }
+    elseif ($video_file_extension -eq ".mkv") {
+        $subtitle_format = "vtt"
+    }
+    else {
+        Write-Error "Unsupported video format: $video_file_extension"
+        return
+    }
     $video_file_name = "output$video_file_extension"
+
+    $audio_file_name = "output.wav"
     $audio_srt = "$audio_file_name.srt"
     $subtitle_language = "English"
+
     $whisper_path = "C:\Program Files\whisper-bin-x64"
     $whisper_exe = "$whisper_path\main.exe"
     $whisper_models = "$whisper_path\models"
-    $default_model = "$whisper_models\ggml-base.en.bin"
+    $default_model = "$whisper_models\ggml-base.bin"
 
     # Convert audio from each video to 16-bit 16kHz PCM WAV as Whisper.cpp requires
     ffmpeg -i $File -ar 16000 -ac 1 -c:a pcm_s16le $audio_file_name
     # Use Whisper.cpp to transcribe each audio file and output a .srt file        
-    & "$whisper_exe" -m $default_model --threads (Get-CimInstance Win32_ComputerSystem).NumberOfLogicalProcessors --output-srt --print-colors $audio_file_name
+    & "$whisper_exe" -m $default_model --threads (Get-CimInstance Win32_ComputerSystem).NumberOfLogicalProcessors --output-$subtitle_format --print-colors $audio_file_name
     # Package the .srt file back into the video
     ffmpeg -i $File -i $audio_srt -c copy -c:s mov_text -metadata:s:s:0 title=$subtitle_language $video_file_name
     # Rename the video file to the original name. We use `-Force` to overwrite the file since the original video file is no longer needed.
@@ -65,7 +77,9 @@ function whisper($File) {
 }
 
 # Modified from https://github.com/TheFrenchGhosty/TheFrenchGhostys-Ultimate-YouTube-DL-Scripts-Collection
-function yt($Url) {
+function yt {
+    param([string]$Url, [switch]$Subtitles)
+
     $output = "%(title)s.%(ext)s"
     if ($Url -contains "playlist") {
         $output = "%(playlist_index)04d - %(title)s.%(ext)s" 
@@ -75,34 +89,15 @@ function yt($Url) {
     $output_format = "mp4"
 
     yt-dlp --sponsorblock-remove all --format $format --no-continue --embed-metadata --parse-metadata "%(title)s:%(meta_title)s" --parse-metadata "%(uploader)s:%(meta_artist)s" --embed-thumbnail --embed-subs --sub-langs "all,-live_chat" --concurrent-fragments 5 --output $output --merge-output-format $output_format "$Url"
+    
+    # Use Whisper.cpp to transcribe audio from each video, save to a .srt file, and package the subtitle back into the video
+    if ($subtitles) {
+        foreach ($file in Get-ChildItem *$output_format) {
+            whisper($file)
+        }
+    }
 }
 
 function yts($Url) {
-    $audio_file_name = "output.wav"
-    $video_file_extension = ".mp4"
-    $video_file_name = "output$video_file_extension"
-    $audio_srt = "$audio_file_name.srt"
-    $subtitle_language = "English"
-    $whisper_path = "C:\Program Files\whisper-bin-x64"
-    $whisper_exe = "$whisper_path\main.exe"
-    $whisper_models = "$whisper_path\models"
-    $default_model = "$whisper_models\ggml-base.en.bin"
-
-    # Download video(s) from YouTube
-    yt($Url)
-
-    # Use Whisper.cpp to transcribe audio from each video, save to a .srt file, and package the subtitle back into the video
-    foreach ($file in Get-ChildItem *$video_file_extension) {
-        # Convert audio from each video to 16-bit 16kHz PCM WAV as Whisper.cpp requires
-        ffmpeg -i $file -ar 16000 -ac 1 -c:a pcm_s16le $audio_file_name
-        # Use Whisper.cpp to transcribe each audio file and output a .srt file
-        & "$whisper_exe" -m $default_model --threads (Get-CimInstance Win32_ComputerSystem).NumberOfLogicalProcessors --output-srt --print-colors $audio_file_name
-        # Package the .srt file back into the video
-        ffmpeg -i $file -i $audio_srt -c copy -c:s mov_text -metadata:s:s:0 title=$subtitle_language $video_file_name
-        # Rename the video file to the original name. We use `-Force` to overwrite the file since the original video file is no longer needed.
-        Move-Item -Force $video_file_name $file
-        # Clean up files
-        Remove-Item $audio_file_name
-        Remove-Item $audio_srt
-    }
+    yt $Url -Subtitles
 }
