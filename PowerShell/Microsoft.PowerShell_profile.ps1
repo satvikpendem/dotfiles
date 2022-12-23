@@ -35,7 +35,15 @@ function ws($Package) { winget search $Package }
 function fbrb { flutter pub run build_runner build --delete-conflicting-outputs }
 function fbrw { flutter pub run build_runner watch --delete-conflicting-outputs }
 
-function whisper($File) {
+function whisper {
+    param(
+        [string] $File,
+        [Parameter()]
+        [ValidateSet('tiny', 'tiny.en', 'base', 'base.en', 'small', 'small.en', 'medium', 'medium.en', 'large', 'large')]
+        [string]
+        $Model = "base"
+    )
+
     if ($null -eq $File) {
         Write-Error "No file specified"
         return
@@ -61,7 +69,7 @@ function whisper($File) {
     $whisper_path = "C:\Program Files\whisper-bin-x64"
     $whisper_exe = "$whisper_path\main.exe"
     $whisper_models = "$whisper_path\models"
-    $default_model = "$whisper_models\ggml-base.bin"
+    $default_model = "$whisper_models\ggml-$Model.bin"
 
     # Convert audio from each video to 16-bit 16kHz PCM WAV as Whisper.cpp requires
     ffmpeg -i $File -ar 16000 -ac 1 -c:a pcm_s16le $audio_file_name
