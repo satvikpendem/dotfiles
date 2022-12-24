@@ -41,7 +41,7 @@ apt_packages="build-essential clang cmake fd-find llvm libc++-dev libstdc++-10-d
 brew_packages="bat curl deno exa fd llvm neovim vim wget xh zoxide zld"
 brew_cask_packages="alt-tab appcleaner chrome-remote-desktop-host cloudflare-warp firefox flutter github google-chrome iterm2 linear-linear lunar macs-fan-control messenger moonlight mpv neovide nightfall nordvpn parsec qbittorrent rectangle slack stats visual-studio-code zoom"
 
-cargo_packages="bat cargo-audit cargo-cranky cargo-do cargo-edit cargo-nextest cargo-tarpaulin cargo-watch exa fnm hyperfine git-delta skim starship tealdeer xh zoxide"
+cargo_packages="bat cargo-audit cargo-cranky cargo-do cargo-edit cargo-expand cargo-nextest cargo-tarpaulin cargo-watch exa fnm hyperfine git-delta skim starship tealdeer xh zoxide"
 
 installer="UNKNOWN"
 
