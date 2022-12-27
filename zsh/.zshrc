@@ -6,6 +6,13 @@ fi
 # Rust
 export PATH=$HOME/.cargo/bin:$PATH
 export CARGO_TARGET_DIR=$HOME/.cargo/cache
+# `RUSTFLAGS="-Ctarget-cpu=native" cargo build --release` makes sure that the
+# binary is compiled with the CPU's native instructions. This is useful for
+# speeding up the binary.
+# We use RUSTFLAGS instead of `cargo build --release --target-cpu=native` because
+# the latter works only for the top-level crate, and not for its dependencies, while
+# the RUSTFLAGS works for all dependencies
+export RUSTFLAGS="-Ctarget-cpu=native"
 
 # Starship.rs
 if [[ "$(uname)" == "Darwin" ]]; then
@@ -54,7 +61,7 @@ export PATH="$DENO_INSTALL/bin:$PATH"
 # Python (anaconda3)
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/home/satvik/anaconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+__conda_setup="$('/home/satvik/anaconda3/bin/conda' 'shell.zsh' 'hook' 2>/dev/null)"
 if [ $? -eq 0 ]; then
     eval "$__conda_setup"
 else
@@ -80,16 +87,16 @@ alias ls="exa -la --git --icons -la"
 alias l="ls"
 alias rm="rm -rf"
 if [[ "$(uname)" == "Linux" ]]; then
-  # If we find the commands below, that means they were installed
-  # via `cargo` and not `apt`
-  if ! [ -x "$(command -v bat)" ]; then
-    alias cat="batcat"
-  else
-    alias cat="bat"
-  fi
-  if ! [ -x "$(command -v fd)" ]; then
-    alias fd="fdfind"
-  fi
+    # If we find the commands below, that means they were installed
+    # via `cargo` and not `apt`
+    if ! [ -x "$(command -v bat)" ]; then
+        alias cat="batcat"
+    else
+        alias cat="bat"
+    fi
+    if ! [ -x "$(command -v fd)" ]; then
+        alias fd="fdfind"
+    fi
 elif [[ "$(uname)" == "Darwin" ]]; then
     alias cat="bat"
 fi
