@@ -10,7 +10,16 @@ rustflags = [
 [target.aarch64-apple-darwin]
 # zld linker for macOS
 # rustflags = ["-C", "link-arg=-fuse-ld=/opt/homebrew/bin/zld"]
-# mold linker, still experimental for macOS
+# mold/sold linker
+linker = "/usr/bin/clang"
+rustflags = [
+    "-C",
+    "link-arg=-fuse-ld=/usr/local/bin/mold",
+    "-C",
+    "target-cpu=native",
+]
+
+[target.x86_64-apple-darwin]
 linker = "/usr/bin/clang"
 rustflags = [
     "-C",

@@ -62,7 +62,7 @@ if [ "$(uname)" == "Linux" ]; then
     $installer dist-upgrade -y -qq
     for package in $common_packages; do
         operational "\t- Installing $package..."
-        $installer install -qq $package > /dev/null
+        $installer install -qq $package >/dev/null
     done
 elif [ "$(uname)" == "Darwin" ]; then
     operational "- OS is macOS"
@@ -90,14 +90,14 @@ fi
 
 operational "- Installing $installer packages..."
 if [ "$(uname)" == "Linux" ]; then
-    $installer update -qq > /dev/null
-    $installer upgrade -qq > /dev/null
+    $installer update -qq >/dev/null
+    $installer upgrade -qq >/dev/null
     for package in $apt_packages; do
         operational "\t- Installing $package..."
-        $installer install -qq $package > /dev/null
+        $installer install -qq $package >/dev/null
     done
-    $installer autoremove -qq --purge > /dev/null
-    $installer -qq clean > /dev/null
+    $installer autoremove -qq --purge >/dev/null
+    $installer -qq clean >/dev/null
 elif [ "$(uname)" == "Darwin" ]; then
     # Add tap for zld, a linker for Rust on macOS
     $installer tap -q michaeleisel/homebrew-zld
@@ -118,9 +118,9 @@ fi
 
 if [ "$(uname)" == "Linux" ]; then
     operational "- Installing neovim on Ubuntu..."
-    sudo add-apt-repository ppa:neovim-ppa/stable -y > /dev/null
-    $installer update -qq > /dev/null
-    $installer install -qq neovim > /dev/null
+    sudo add-apt-repository ppa:neovim-ppa/stable -y >/dev/null
+    $installer update -qq >/dev/null
+    $installer install -qq neovim >/dev/null
 fi
 
 operational "- Finished installing $installer packages"
@@ -132,22 +132,31 @@ operational "###     PROGRAMMING LANGUAGES      ###"
 operational "###                                ###"
 operational "######################################"
 
-# Install mold linker
-# On macOS, this is already installed through Homebrew
+# Install mold/sold linker
+# https://github.com/rui314/mold
+# https://github.com/bluewhalesystems/sold - superset of `mold`, supports macOS/iOS which mold itself does not
+mold_url="https://github.com/bluewhalesystems/sold"
+operational "- Installing mold/sold linker..."
+rm -rf $HOME/mold
+git clone $mold_url $HOME/mold
+cd $HOME/mold
+mkdir build
+cd build
+sudo ../install-build-deps.sh
+cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=c++ ..
+# Different ways to access number of CPU cores/threads on Linux versus macOS
 if [ "$(uname)" == "Linux" ]; then
-    operational "- Installing mold linker on Linux..."
-    # mold linker
-    git clone https://github.com/rui314/mold.git $HOME/mold
-    cd $HOME/mold
-    git checkout v1.6.0 # latest stable release
-    mkdir mold/build
-    sudo ../install-build-deps.sh
-    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=c++ ..
     cmake --build . -j $(nproc)
-    sudo cmake --install .
-    cd $HOME
-    rm -rf $HOME/mold
+elif [ "$(uname)" == "Darwin" ]; then
+    cmake --build . -j $(sysctl -n hw.logicalcpu)
+else
+    cmake --build .
 fi
+# sold requires a license file to be present in the root directory
+touch ../LICENSE
+sudo cmake --install .
+cd $HOME
+rm -rf $HOME/mold
 
 cd $HOME
 
