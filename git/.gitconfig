@@ -1,12 +1,12 @@
 [user]
-  email = satvik.pendem@gmail.com
   name = Satvik Pendem
+  email = satvik.pendem@gmail.com
 
 [init]
   defaultBranch = main
 
 [push]
-	default = simple
+  default = simple
   autoSetupRemote = true
 
 [core]
@@ -29,4 +29,10 @@
   colorMoved = default
 
 [credential]
-	helper = store
+  helper = store
+
+[filter "lfs"]
+  clean = git-lfs clean -- %f
+  smudge = git-lfs smudge -- %f
+  process = git-lfs filter-process
+  required = true
