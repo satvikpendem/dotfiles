@@ -15,8 +15,8 @@ fnm env --use-on-cd | Out-String | Invoke-Expression
 # PSReadLine
 # Must install first with
 # Install-Module PSReadLine
-Import-Module PSReadLine
-Set-PSReadLineOption -PredictionSource History
+# Import-Module PSReadLine
+# Set-PSReadLineOption -PredictionSource History
 
 # Aliases
 function rm { Remove-Item -r -Force "${1}" }
@@ -34,16 +34,18 @@ function wu($Package) { winget uninstall $Package }
 function ws($Package) { winget search $Package }
 function fbrb { flutter pub run build_runner build --delete-conflicting-outputs }
 function fbrw { flutter pub run build_runner watch --delete-conflicting-outputs }
+function cb($Crate) { cargo binstall --no-confirm $Crate }
 
-function whisper {
+function whisperv {
     param(
         [string] $File,
         [Parameter()] [ValidateSet('tiny', 'tiny.en', 'base', 'base.en', 'small', 'small.en', 'medium', 'medium.en', 'large', 'large-v1', 'large-v2')] [string] $Model = "base",
         [switch] $Cpu,
         # For generating subtitles only without packaging them into the video
         [switch] $SubtitlesOnly,
-        [Parameter()] [ValidateSet('transcribe', 'translate')] [string] $Task = "transcribe"
-    )
+        [Parameter()] [ValidateSet('transcribe', 'translate')] [string] $Task = "transcribe",
+        # For changing the language of Whisper. If it's not provided, Whisper will auto-detect
+        [Parameter()] [ValidateSet('af', 'am', 'ar', 'as', 'az', 'ba', 'be', 'bg', 'bn', 'bo', 'br', 'bs', 'ca', 'cs', 'cy', 'da', 'de', 'el', 'en', 'es', 'et', 'eu', 'fa', 'fi', 'fo', 'fr', 'gl', 'gu', 'ha', 'haw', 'he', 'hi', 'hr', 'ht', 'hu', 'hy', 'id', 'is', 'it', 'ja', 'jw', 'ka', 'kk', 'km', 'kn', 'ko', 'la', 'lb', 'ln', 'lo', 'lt', 'lv', 'mg', 'mi', 'mk', 'ml', 'mn', 'mr', 'ms', 'mt', 'my', 'ne', 'nl', 'nn', 'no', 'oc', 'pa', 'pl', 'ps', 'pt', 'ro', 'ru', 'sa', 'sd', 'si', 'sk', 'sl', 'sn', 'so', 'sq', 'sr', 'su', 'sv', 'sw', 'ta', 'te', 'tg', 'th', 'tk', 'tl', 'tr', 'tt', 'uk', 'ur', 'uz', 'vi', 'yi', 'yo', 'zh', 'Afrikaans', 'Albanian', 'Amharic', 'Arabic', 'Armenian', 'Assamese', 'Azerbaijani', 'Bashkir', 'Basque', 'Belarusian', 'Bengali', 'Bosnian', 'Breton', 'Bulgarian', 'Burmese', 'Castilian', 'Catalan', 'Chinese', 'Croatian', 'Czech', 'Danish', 'Dutch', 'English', 'Estonian', 'Faroese', 'Finnish', 'Flemish', 'French', 'Galician', 'Georgian', 'German', 'Greek', 'Gujarati', 'Haitian', 'Haitian Creole', 'Hausa', 'Hawaiian', 'Hebrew', 'Hindi', 'Hungarian', 'Icelandic', 'Indonesian', 'Italian', 'Japanese', 'Javanese', 'Kannada', 'Kazakh', 'Khmer', 'Korean', 'Lao', 'Latin', 'Latvian', 'Letzeburgesch', 'Lingala', 'Lithuanian', 'Luxembourgish', 'Macedonian', 'Malagasy', 'Malay', 'Malayalam', 'Maltese', 'Maori', 'Marathi', 'Moldavian', 'Moldovan', 'Mongolian', 'Myanmar', 'Nepali', 'Norwegian', 'Nynorsk', 'Occitan', 'Panjabi', 'Pashto', 'Persian', 'Polish', 'Portuguese', 'Punjabi', 'Pushto', 'Romanian', 'Russian', 'Sanskrit', 'Serbian', 'Shona', 'Sindhi', 'Sinhala', 'Sinhalese', 'Slovak', 'Slovenian', 'Somali', 'Spanish', 'Sundanese', 'Swahili', 'Swedish', 'Tagalog', 'Tajik', 'Tamil', 'Tatar', 'Telugu', 'Thai', 'Tibetan', 'Turkish', 'Turkmen', 'Ukrainian', 'Urdu', 'Uzbek', 'Valencian', 'Vietnamese', 'Welsh', 'Yiddish', 'Yoruba')] [string] $Language)
 
     if ($null -eq $File) {
         Write-Error "No file specified"
@@ -62,10 +64,12 @@ function whisper {
 
     $video_file_extension = [System.IO.Path]::GetExtension($File)
     if ($video_file_extension -eq ".mp4") {
-        $subtitle_format = ".srt"
+        $subtitle_format = "srt"
+        $ffmpeg_subtitle_copy_format = "mov_text"
     }
     elseif ($video_file_extension -eq ".mkv") {
-        $subtitle_format = ".vtt"
+        $subtitle_format = "vtt"
+        $ffmpeg_subtitle_copy_format = "srt"
     }
     else {
         Write-Error "Unsupported video format: $video_file_extension"
@@ -75,7 +79,7 @@ function whisper {
     $video_file_name = "output$video_file_extension"
 
     $audio_file_name = "output.wav"
-    $subtitled_audio = "$audio_file_name$subtitle_format"
+    $subtitled_audio = "$audio_file_name.$subtitle_format"
     $subtitle_language = "English"
 
     if ($Cpu) {
@@ -87,8 +91,16 @@ function whisper {
     else {
         # From the official OpenAI Whisper repo:
         # pip install git+https://github.com/openai/whisper.git
-        $whisper_exe = "whisper.bat"
+        $whisper_exe = "whisper"
         $default_model = $Model
+
+        # From the unofficial C++ GPU implementation:
+        # https://github.com/Const-me/Whisper
+        #
+        # $whisper_path = "C:\Program Files\whisper-bin-x64"
+        # $whisper_exe = "$whisper_path\cli\main.exe"
+        # $whisper_models = "$whisper_path\models"
+        # $default_model = "$whisper_models\ggml-$Model.bin"
     }
 
     # Convert audio from each video to 16-bit 16kHz PCM WAV as Whisper.cpp requires
@@ -100,7 +112,18 @@ function whisper {
     }
     else {
         # GPU
-        & "$whisper_exe" --model large-v2 --device cuda $audio_file_name --task $Task
+        if ($Language) {
+            $languageParameter = "--language $Language"
+        }
+        & "$whisper_exe" --model large-v2 --device cuda $audio_file_name --task $Task $languageParameter
+        
+        # Alternative GPU implementation:
+        # https://github.com/Const-me/Whisper
+        #
+        # if ($Task -eq "translate") {
+        #     $Translate = "--translate"
+        # }
+        # & "$whisper_exe" --model $default_model $Translate --language $Language --threads (Get-CimInstance Win32_ComputerSystem).NumberOfLogicalProcessors --processors (Get-CimInstance Win32_ComputerSystem).NumberOfProcessors --output-$subtitle_format $audio_file_name
     }
 
     if ($SubtitlesOnly) {
@@ -109,7 +132,7 @@ function whisper {
     }
 
     # Package the .srt file back into the video
-    ffmpeg -i $File -i $subtitled_audio -c copy -c:s mov_text -metadata:s:s:0 title=$subtitle_language $video_file_name
+    ffmpeg -i $File -i $subtitled_audio -c copy -c:s $ffmpeg_subtitle_copy_format -metadata:s:s:0 title=$subtitle_language $video_file_name
     # Rename the video file to the original name. We use `-Force` to overwrite the file since the original video file is no longer needed.
     Move-Item -Force $video_file_name $File
     # Clean up files
