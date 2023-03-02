@@ -62,7 +62,7 @@ if [ "$(uname)" == "Linux" ]; then
     $installer dist-upgrade -y -qq
     for package in $common_packages; do
         operational "\t- Installing $package..."
-        $installer install -qq $package > /dev/null
+        $installer install -qq $package >/dev/null
     done
 elif [ "$(uname)" == "Darwin" ]; then
     operational "- OS is macOS"
@@ -90,14 +90,14 @@ fi
 
 operational "- Installing $installer packages..."
 if [ "$(uname)" == "Linux" ]; then
-    $installer update -qq > /dev/null
-    $installer upgrade -qq > /dev/null
+    $installer update -qq >/dev/null
+    $installer upgrade -qq >/dev/null
     for package in $apt_packages; do
         operational "\t- Installing $package..."
-        $installer install -qq $package > /dev/null
+        $installer install -qq $package >/dev/null
     done
-    $installer autoremove -qq --purge > /dev/null
-    $installer -qq clean > /dev/null
+    $installer autoremove -qq --purge >/dev/null
+    $installer -qq clean >/dev/null
 elif [ "$(uname)" == "Darwin" ]; then
     # Add tap for zld, a linker for Rust on macOS
     $installer tap -q michaeleisel/homebrew-zld
@@ -118,9 +118,9 @@ fi
 
 if [ "$(uname)" == "Linux" ]; then
     operational "- Installing neovim on Ubuntu..."
-    sudo add-apt-repository ppa:neovim-ppa/stable -y > /dev/null
-    $installer update -qq > /dev/null
-    $installer install -qq neovim > /dev/null
+    sudo add-apt-repository ppa:neovim-ppa/stable -y >/dev/null
+    $installer update -qq >/dev/null
+    $installer install -qq neovim >/dev/null
 fi
 
 operational "- Finished installing $installer packages"
@@ -133,15 +133,27 @@ operational "###                                ###"
 operational "######################################"
 
 # Install mold linker
-# On macOS, this is already installed through Homebrew
 if [ "$(uname)" == "Linux" ]; then
     operational "- Installing mold linker on Linux..."
     # mold linker
     git clone https://github.com/rui314/mold.git $HOME/mold
     cd $HOME/mold
     # git checkout v1.4.0 # latest stable release
-    make -s -j$(nproc) CXX=clang++
-    sudo make -s install
+    ../install-build-deps.sh
+    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=c++ ..
+    cmake --build . -j $(nproc)
+    sudo cmake --install .
+    cd $HOME
+    rm -rf $HOME/mold
+elif [ "$(uname)" == "Darwin" ]; then
+    operational "- Installing mold/sold linker on macOS..."
+    # sold linker
+    git clone https://github.com/bluewhalesystems/sold.git $HOME/mold
+    cd $HOME/mold
+    # git checkout v1.4.0 # latest stable release
+    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=c++ ..
+    cmake --build . -j $(sysctl -n hw.logicalcpu)
+    sudo cmake --install .
     cd $HOME
     rm -rf $HOME/mold
 fi

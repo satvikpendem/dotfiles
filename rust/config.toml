@@ -7,7 +7,7 @@ rustflags = ["-C", "link-arg=-fuse-ld=/usr/local/bin/mold"]
 # rustflags = ["-C", "link-arg=-fuse-ld=/opt/homebrew/bin/zld"]
 # mold linker, still experimental for macOS
 linker = "/usr/bin/clang"
-rustflags = ["-C", "link-arg=-fuse-ld=/opt/homebrew/bin/ld64.mold"]
+rustflags = ["-C", "link-arg=-fuse-ld=/usr/local/bin/ld64.mold"]
 
 [build]
 rustc-wrapper = ".cargo/bin/sccache"
