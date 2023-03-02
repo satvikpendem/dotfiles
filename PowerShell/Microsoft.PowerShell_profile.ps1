@@ -27,6 +27,7 @@ Set-Alias vim nvim.exe
 Set-Alias v nvim.exe
 Set-Alias cat bat.exe
 function gs { git status }
+function gd { git diff }
 function gap { git add . && git commit && git push }
 function wug { winget upgrade --all --silent }
 function wi($Package) { winget install $Package }
