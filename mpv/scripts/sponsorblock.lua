@@ -3,79 +3,56 @@
 -- This script skips sponsored segments of YouTube videos
 -- using data from https://github.com/ajayyy/SponsorBlock
 
-local ON_WINDOWS = package.config:sub(1,1) ~= "/"
+local ON_WINDOWS = package.config:sub(1, 1) ~= "/"
 
 local options = {
     server_address = "https://sponsor.ajay.app",
-
     python_path = ON_WINDOWS and "python" or "python3",
-
     -- Categories to fetch
-    categories = "sponsor,intro,outro,interaction,selfpromo,filler",
-
+    categories = "sponsor,selfpromo,interaction,intro,outro,preview,music_offtopic,filler",
     -- Categories to skip automatically
-    skip_categories = "sponsor",
-
+    skip_categories = "sponsor,selfpromo,interaction,intro,outro,preview,music_offtopic,filler",
     -- If true, sponsored segments will only be skipped once
     skip_once = true,
-
     -- Note that sponsored segments may ocasionally be inaccurate if this is turned off
     -- see https://blog.ajay.app/voting-and-pseudo-randomness-or-sponsorblock-or-youtube-sponsorship-segment-blocker
     local_database = false,
-
     -- Update database on first run, does nothing if local_database is false
     auto_update = true,
-
     -- How long to wait between local database updates
     -- Format: "X[d,h,m]", leave blank to update on every mpv run
-    auto_update_interval = "6h",
-
+    auto_update_interval = "",
     -- User ID used to submit sponsored segments, leave blank for random
     user_id = "",
-
     -- Name to display on the stats page https://sponsor.ajay.app/stats/ leave blank to keep current name
     display_name = "",
-
     -- Tell the server when a skip happens
     report_views = true,
-
     -- Auto upvote skipped sponsors
     auto_upvote = false,
-
     -- Use sponsor times from server if they're more up to date than our local database
     server_fallback = true,
-
     -- Create chapters at sponsor boundaries for OSC display and manual skipping
     make_chapters = true,
-
     -- Minimum duration for sponsors (in seconds), segments under that threshold will be ignored
-    min_duration = 1,
-
+    min_duration = 0,
     -- Fade audio for smoother transitions
     audio_fade = false,
-
     -- Audio fade step, applied once every 100ms until cap is reached
     audio_fade_step = 10,
-
     -- Audio fade cap
     audio_fade_cap = 0,
-
     -- Fast forward through sponsors instead of skipping
     fast_forward = false,
-
     -- Playback speed modifier when fast forwarding, applied once every second until cap is reached
     fast_forward_increase = .2,
-
     -- Playback speed cap
     fast_forward_cap = 2,
-
     -- Length of the sha256 prefix (3-32) when querying server, 0 to disable
     sha256_length = 4,
-
     -- Pattern for video id in local files, ignored if blank
     -- Recommended value for base youtube-dl is "-([%w-_]+)%.[mw][kpe][v4b]m?$"
     local_pattern = "",
-
     -- Legacy option, use skip_categories instead
     skip = true
 }
@@ -96,19 +73,20 @@ scripts_dir = mp.find_config_file("scripts")
 
 local sponsorblock = utils.join_path(scripts_dir, "sponsorblock_shared/sponsorblock.py")
 local uid_path = utils.join_path(scripts_dir, "sponsorblock_shared/sponsorblock.txt")
-local database_file = options.local_database and utils.join_path(scripts_dir, "sponsorblock_shared/sponsorblock.db") or ""
+local database_file = options.local_database and utils.join_path(scripts_dir, "sponsorblock_shared/sponsorblock.db") or
+    ""
 local youtube_id = nil
 local ranges = {}
 local init = false
-local segment = {a = 0, b = 0, progress = 0, first = true}
+local segment = { a = 0, b = 0, progress = 0, first = true }
 local retrying = false
-local last_skip = {uuid = "", dir = nil}
+local last_skip = { uuid = "", dir = nil }
 local speed_timer = nil
 local fade_timer = nil
 local fade_dir = nil
 local volume_before = mp.get_property_number("volume")
 local categories = {}
-local all_categories = {"sponsor", "intro", "outro", "interaction", "selfpromo", "preview", "music_offtopic", "filler"}
+local all_categories = { "sponsor", "intro", "outro", "interaction", "selfpromo", "preview", "music_offtopic", "filler" }
 local chapter_cache = {}
 
 for category in string.gmatch(options.skip_categories, "([^,]+)") do
@@ -116,8 +94,13 @@ for category in string.gmatch(options.skip_categories, "([^,]+)") do
 end
 
 function file_exists(name)
-    local f = io.open(name,"r")
-    if f ~= nil then io.close(f) return true else return false end
+    local f = io.open(name, "r")
+    if f ~= nil then
+        io.close(f)
+        return true
+    else
+        return false
+    end
 end
 
 function t_count(t)
@@ -167,7 +150,8 @@ end
 function create_chapter(chapter_title, chapter_time)
     local chapters = mp.get_property_native("chapter-list")
     local duration = mp.get_property_native("duration")
-    table.insert(chapters, {title=chapter_title, time=(duration == nil or duration > chapter_time) and chapter_time or duration - .001})
+    table.insert(chapters,
+        { title = chapter_title, time = (duration == nil or duration > chapter_time) and chapter_time or duration - .001 })
     table.sort(chapters, time_sort)
     mp.set_property_native("chapter-list", chapters)
 end
@@ -230,9 +214,9 @@ function getranges(_, exists, db, more)
         tostring(options.sha256_length)
     }
     if not legacy then
-        sponsors = mp.command_native({name = "subprocess", capture_stdout = true, playback_only = false, args = args})
+        sponsors = mp.command_native({ name = "subprocess", capture_stdout = true, playback_only = false, args = args })
     else
-        sponsors = utils.subprocess({args = args})
+        sponsors = utils.subprocess({ args = args })
     end
     mp.msg.debug("Got: " .. string.gsub(sponsors.stdout, "[\n\r]", ""))
     if not string.match(sponsors.stdout, "^%s*(.*%S)") then return end
@@ -291,7 +275,7 @@ function skip_ads(name, pos)
                 mp.osd_message("[sponsorblock] skipping " .. t.category)
             end
             t.skipped = true
-            last_skip = {uuid = uuid, dir = nil}
+            last_skip = { uuid = uuid, dir = nil }
             if options.report_views or options.auto_upvote then
                 local args = {
                     options.python_path,
@@ -307,9 +291,10 @@ function skip_ads(name, pos)
                     options.auto_upvote and "1" or ""
                 }
                 if not legacy then
-                    mp.command_native_async({name = "subprocess", playback_only = false, args = args}, function () end)
+                    mp.command_native_async({ name = "subprocess", playback_only = false, args = args }, function()
+                    end)
                 else
-                    utils.subprocess_detached({args = args})
+                    utils.subprocess_detached({ args = args })
                 end
             end
             if options.fast_forward ~= false then
@@ -328,7 +313,7 @@ function skip_ads(name, pos)
                 if fade_dir == nil then volume_before = mp.get_property_number("volume") end
                 if fade_timer ~= nil then fade_timer:kill() end
                 fade_dir = false
-                fade_timer = mp.add_periodic_timer(.1, function() fade_audio(-options.audio_fade_step) end)
+                fade_timer = mp.add_periodic_timer(.1, function() fade_audio( -options.audio_fade_step) end)
             end
         elseif fade_dir == false then
             fade_dir = true
@@ -363,28 +348,33 @@ function vote(dir)
         dir
     }
     if not legacy then
-        mp.command_native_async({name = "subprocess", playback_only = false, args = args}, function () end)
+        mp.command_native_async({ name = "subprocess", playback_only = false, args = args }, function()
+        end)
     else
-        utils.subprocess({args = args})
+        utils.subprocess({ args = args })
     end
     mp.osd_message("[sponsorblock] " .. updown .. "vote submitted")
 end
 
 function update()
-    mp.command_native_async({name = "subprocess", playback_only = false, args = {
-        options.python_path,
-        sponsorblock,
-        "update",
-        database_file,
-        options.server_address
-    }}, getranges)
+    mp.command_native_async({
+        name = "subprocess",
+        playback_only = false,
+        args = {
+            options.python_path,
+            sponsorblock,
+            "update",
+            database_file,
+            options.server_address
+        }
+    }, getranges)
 end
 
 function file_loaded()
     local initialized = init
     ranges = {}
-    segment = {a = 0, b = 0, progress = 0, first = true}
-    last_skip = {uuid = "", dir = nil}
+    segment = { a = 0, b = 0, progress = 0, first = true }
+    last_skip = { uuid = "", dir = nil }
     chapter_cache = {}
     local video_path = mp.get_property("path", "")
     mp.msg.debug("Path: " .. video_path)
@@ -399,12 +389,12 @@ function file_loaded()
         "/embed/([%w-_]+).*"
     }
     youtube_id = nil
-    for i, url in ipairs(urls) do 
+    for i, url in ipairs(urls) do
         youtube_id = youtube_id or string.match(video_path, url) or string.match(video_referer, url)
         if youtube_id then break end
     end
     youtube_id = youtube_id or string.match(video_path, options.local_pattern)
-    
+
     if not youtube_id or string.len(youtube_id) < 11 or (local_pattern and string.len(youtube_id) ~= 11) then return end
     youtube_id = string.sub(youtube_id, 1, 11)
     mp.msg.debug("Found YouTube ID: " .. youtube_id)
@@ -441,9 +431,10 @@ function file_loaded()
             options.display_name
         }
         if not legacy then
-            mp.command_native_async({name = "subprocess", playback_only = false, args = args}, function () end)
+            mp.command_native_async({ name = "subprocess", playback_only = false, args = args }, function()
+            end)
         else
-            utils.subprocess_detached({args = args})
+            utils.subprocess_detached({ args = args })
         end
     end
     if not options.local_database or (not options.auto_update and file_exists(database_file)) then return end
@@ -488,8 +479,8 @@ end
 
 function select_category(selected)
     for category in string.gmatch(options.categories, "([^,]+)") do
-        mp.remove_key_binding("select_category_"..category)
-        mp.remove_key_binding("kp_select_category_"..category)
+        mp.remove_key_binding("select_category_" .. category)
+        mp.remove_key_binding("kp_select_category_" .. category)
     end
     submit_segment(selected)
 end
@@ -506,10 +497,17 @@ function submit_segment(category)
         for category_id, category in pairs(all_categories) do
             local category_title = (category:gsub("^%l", string.upper):gsub("_", " "))
             category_list = category_list .. category_id .. ": " .. category_title .. "\n"
-            mp.add_forced_key_binding(tostring(category_id), "select_category_"..category, function() select_category(category) end)
-            mp.add_forced_key_binding("KP"..tostring(category_id), "kp_select_category_"..category, function() select_category(category) end)
+            mp.add_forced_key_binding(tostring(category_id), "select_category_" .. category,
+                function() select_category(category) end)
+            mp.add_forced_key_binding("KP" .. tostring(category_id), "kp_select_category_" .. category,
+                function() select_category(category) end)
         end
-        mp.osd_message(string.format("[sponsorblock] press a number to select category for segment: %.2d:%.2d:%.2d to %.2d:%.2d:%.2d\n\n" .. category_list .. "\nyou can press Shift+G again for default (Sponsor) or hide this message with g", math.floor(start_time/(60*60)), math.floor(start_time/60%60), math.floor(start_time%60), math.floor(end_time/(60*60)), math.floor(end_time/60%60), math.floor(end_time%60)), 30)
+        mp.osd_message(
+            string.format(
+                "[sponsorblock] press a number to select category for segment: %.2d:%.2d:%.2d to %.2d:%.2d:%.2d\n\n" ..
+                category_list .. "\nyou can press Shift+G again for default (Sponsor) or hide this message with g",
+                math.floor(start_time / (60 * 60)), math.floor(start_time / 60 % 60), math.floor(start_time % 60),
+                math.floor(end_time / (60 * 60)), math.floor(end_time / 60 % 60), math.floor(end_time % 60)), 30)
     else
         mp.osd_message("[sponsorblock] submitting segment...", 30)
         local submit
@@ -527,12 +525,12 @@ function submit_segment(category)
             category or "sponsor"
         }
         if not legacy then
-            submit = mp.command_native({name = "subprocess", capture_stdout = true, playback_only = false, args = args})
+            submit = mp.command_native({ name = "subprocess", capture_stdout = true, playback_only = false, args = args })
         else
-            submit = utils.subprocess({args = args})
+            submit = utils.subprocess({ args = args })
         end
         if string.match(submit.stdout, "success") then
-            segment = {a = 0, b = 0, progress = 0, first = true}
+            segment = { a = 0, b = 0, progress = 0, first = true }
             mp.osd_message("[sponsorblock] segment submitted")
             if options.make_chapters then
                 clean_chapters()
@@ -545,12 +543,12 @@ function submit_segment(category)
             mp.osd_message("[sponsorblock] segment submission failed, server is down. try again", 5)
         elseif string.match(submit.stdout, "400") then
             mp.osd_message("[sponsorblock] segment submission failed, impossible inputs", 5)
-            segment = {a = 0, b = 0, progress = 0, first = true}
+            segment = { a = 0, b = 0, progress = 0, first = true }
         elseif string.match(submit.stdout, "429") then
             mp.osd_message("[sponsorblock] segment submission failed, rate limited. try again", 5)
         elseif string.match(submit.stdout, "409") then
             mp.osd_message("[sponsorblock] segment already submitted", 3)
-            segment = {a = 0, b = 0, progress = 0, first = true}
+            segment = { a = 0, b = 0, progress = 0, first = true }
         else
             mp.osd_message("[sponsorblock] segment submission failed", 5)
         end
