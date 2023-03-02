@@ -22,6 +22,9 @@ else
 fi
 eval "$(starship init zsh)"
 
+# Haskell
+[ -f "/home/satvik/.ghcup/env" ] && source "/home/satvik/.ghcup/env" # ghcup-env
+
 # Bind ctrl+key actions
 ### ctrl+arrows
 bindkey "\e[1;5C" forward-word
@@ -75,7 +78,7 @@ unset __conda_setup
 # <<< conda initialize <<<
 
 export PYENV_ROOT="$HOME/.pyenv"
-command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
+export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
 
 # Default editor for git and others
@@ -163,3 +166,4 @@ HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS='i'
 
 # Use bat with manpages
 export MANPAGER="sh -c 'col -bx | bat -l man -p'"
+
