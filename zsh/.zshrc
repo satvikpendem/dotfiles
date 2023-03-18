@@ -138,6 +138,70 @@ alias gc="git commit"
 alias gp="git push -u"
 alias gap="git add . && git commit && git push"
 alias gic="git add . && git commit -am 'Init commit' && git push -u"
+ghi() {
+    local REPO_NAME=""
+    local REPO_VISIBILITY="--private"
+    local REMOTE="origin"
+
+    # Process the arguments
+    # If the argument is --public, set the REPO_VISIBILITY variable to --public which will be used in the `gh repo create` command
+    # This allows for usage like `ghi --public my-repo` or `ghi my-repo --public`
+    for arg in "$@"; do
+        if [ "$arg" = "--public" ]; then
+            REPO_VISIBILITY="--public"
+        elif [ -z "$REPO_NAME" ]; then
+            REPO_NAME="$arg"
+        else
+            echo "Invalid argument: $arg"
+            return 1
+        fi
+    done
+
+    # Check if repository name is provided
+    if [ -z "$REPO_NAME" ]; then
+        echo "Repository name is required"
+        return 1
+    fi
+
+    # Check if `.git` directory exists, if not, initialize git
+    if [ ! -d ".git" ]; then
+        git init
+        echo "Initialized git"
+    fi
+
+    # Run the gh repo create command and store the output in a variable
+    local GH_OUTPUT=$(gh repo create "$REPO_NAME" $REPO_VISIBILITY --source=. --remote=$REMOTE)
+    echo "Created repository on GitHub:"
+    echo "$GH_OUTPUT"
+
+    # Use grep and awk to parse the git repository URL from the output
+    local REPO=$(echo "$GH_OUTPUT" | grep -o 'git@github.com:[^ ]*' | awk '{print $1}')
+    echo "Repository URL: $REPO"
+
+    # Add the remote origin
+    git remote add origin "$REPO"
+    echo "Added remote origin"
+
+    # Add all files and commit
+    git add .
+    echo "Added all files"
+    git commit -m "Init commit"
+    echo "Committed"
+
+    # Check for branches, either main or master
+    local BRANCH=$(git branch -a | grep -o 'main\|master' | head -n 1)
+    echo "Branch: $BRANCH"
+
+    if [ -z "$BRANCH" ]; then
+        echo "No branch found, using main"
+        BRANCH="main"
+        echo "Branch: $BRANCH"
+    fi
+
+    echo "Pushing to $BRANCH"
+    git push --set-upstream $REMOTE $BRANCH
+    echo "Completed successfully"
+}
 
 ## Cargo
 alias cb="cargo binstall --no-confirm"
@@ -166,4 +230,3 @@ HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS='i'
 
 # Use bat with manpages
 export MANPAGER="sh -c 'col -bx | bat -l man -p'"
-
