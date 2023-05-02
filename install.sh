@@ -34,14 +34,15 @@ function cargo_binstall {
     cargo binstall --no-confirm --log-level=error $1
 }
 
-common_packages="curl git htop httpie nim ripgrep unzip vim wget zsh"
+common_packages="curl git htop unzip vim wget zsh"
 
 apt_packages="build-essential clang cmake fd-find llvm libc++-dev libstdc++-10-dev libssl-dev pkg-config zlib1g zlib1g-dev"
 
-brew_packages="bat curl deno exa fd llvm neovim vim wget xh zoxide zld"
-brew_cask_packages="alt-tab appcleaner chrome-remote-desktop-host cloudflare-warp firefox flutter github google-chrome iterm2 linear-linear lunar macs-fan-control messenger moonlight mpv neovide nightfall nordvpn parsec qbittorrent rectangle slack stats visual-studio-code zoom"
+brew_taps="michaeleisel/homebrew-zld epk/epk"
+brew_packages="curl deno fd fzf llvm mas neovim postgresql@15 redis vim wget yarn zld"
+brew_cask_packages="alt-tab android-platform-tools android-studio appcleaner chrome-remote-desktop-host discord firefox font-sf-mono-nerd-font github google-chrome iina iterm2 keka kekaexternalhelper linear-linear lunar maccy messenger mpv neovide nordvpn parsec qbittorrent rectangle slack stats visual-studio-code vlc"
 
-cargo_packages="bat bunyan cargo-audit cargo-cmd cargo-cranky cargo-do cargo-edit cargo-generate cargo-nextest cargo-tarpaulin cargo-tomlfmt cargo-watch cross exa fnm hyperfine git-delta skim starship tealdeer xh zoxide"
+cargo_packages="bat bunyan cargo-audit cargo-chef cargo-cmd cargo-cranky cargo-edit cargo-generate cargo-nextest cargo-tarpaulin cargo-tomlfmt cargo-update cargo-watch cross du-dust exa erdtree fnm git-delta hyperfine jaq just ripgrep skim starship tealdeer xh xq zoxide"
 
 installer="UNKNOWN"
 
@@ -76,6 +77,12 @@ elif [ "$(uname)" == "Darwin" ]; then
     fi
 
     installer="brew"
+    operational "- Updating brew taps..."
+    for tap in $brew_taps; do
+        operational "\t- Tapping $tap..."
+        $installer tap -q $tap
+    done
+
     operational "- Installing common packages..."
     for package in $common_packages; do
         operational "\t- Installing $package..."
@@ -99,9 +106,6 @@ if [ "$(uname)" == "Linux" ]; then
     $installer autoremove -qq --purge >/dev/null
     $installer -qq clean >/dev/null
 elif [ "$(uname)" == "Darwin" ]; then
-    # Add tap for zld, a linker for Rust on macOS
-    $installer tap -q michaeleisel/homebrew-zld
-
     $installer update -q
     $installer upgrade -q
     for package in $brew_packages; do
@@ -138,7 +142,6 @@ if [ "$(uname)" == "Linux" ]; then
     # mold linker
     git clone https://github.com/rui314/mold.git $HOME/mold
     cd $HOME/mold
-    # git checkout v1.4.0 # latest stable release
     ../install-build-deps.sh
     cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=c++ ..
     cmake --build . -j $(nproc)
@@ -150,7 +153,6 @@ elif [ "$(uname)" == "Darwin" ]; then
     # sold linker
     git clone https://github.com/bluewhalesystems/sold.git $HOME/mold
     cd $HOME/mold
-    # git checkout v1.4.0 # latest stable release
     cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=c++ ..
     cmake --build . -j $(sysctl -n hw.logicalcpu)
     sudo cmake --install .
@@ -190,6 +192,18 @@ if [ "$(uname)" == "Linux" ]; then
     curl -fsSL https://deno.land/x/install/install.sh | sh
 fi
 
+if [ "$(uname)" == "Darwin" ]; then
+    operational "- Installing Flutter..."
+    cd $HOME
+    git clone https://github.com/flutter/flutter.git -b stable
+    export PATH="$PATH:$HOME/flutter/bin"
+    flutter config --no-analytics
+    flutter precache
+    dart --disable-analytics
+    yes | flutter doctor --android-licenses
+    flutter doctor
+fi
+
 operational "- Finished installing programming languages"
 echo -e "\n"
 
@@ -225,14 +239,30 @@ operational "###         MISCELLANEOUS          ###"
 operational "###                                ###"
 operational "######################################"
 
+operational "- Installing SF Mono Nerd Fonts..."
+if [ "$(uname)" == "Darwin" ]; then
+    $installer tap epk/epk
+    $installer install --cask font-sf-mono-nerd-font
+fi
+
 operational "- Hushing login prompts..."
 touch $HOME/.hushlogin
 
 operational "- Changing shell to zsh"
 chsh -s $(which zsh)
 
+operational "- Sourcing .zshrc..."
+source $HOME/.zshrc
+
 operational "######################################"
 operational "###                                ###"
 operational "###           FINISHED!            ###"
 operational "###                                ###"
 operational "######################################"
+
+operational "############# Next Steps #############"
+
+operational "- Install Xcode from the App Store"
+operational "- Install the following apps:"
+operational "\t- Amphetamine"
+operational "\t- Amphetamine Enhancer"
