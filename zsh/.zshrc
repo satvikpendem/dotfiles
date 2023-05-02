@@ -118,6 +118,7 @@ elif [[ "$(uname)" == "Darwin" ]]; then
     alias bi="brew install"
     alias bic="brew install --cask"
     alias bu="brew uninstall"
+    alias bu="brew uninstall --cask"
     alias bug="brew update && brew upgrade"
     alias bs="brew search"
     alias bt="brew tap"
@@ -163,3 +164,12 @@ HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS='i'
 
 # Use bat with manpages
 export MANPAGER="sh -c 'col -bx | bat -l man -p'"
+
+# OpenSSL
+if [[ "$(uname)" == "Darwin" ]]; then
+    export PATH="/usr/local/opt/openssl@1.1/bin:$PATH"
+    export LDFLAGS="-L/usr/local/opt/openssl@1.1/lib"
+    export CPPFLAGS="-I/usr/local/opt/openssl@1.1/include"
+    export PKG_CONFIG_PATH="/usr/local/opt/openssl@1.1/lib/pkgconfig"
+fi
+
