@@ -40,7 +40,7 @@ apt_packages="build-essential clang cmake fd-find llvm libc++-dev libstdc++-10-d
 
 brew_taps="michaeleisel/homebrew-zld epk/epk"
 brew_packages="curl deno fd fzf llvm mas neovim postgresql@15 redis vim wget yarn zld"
-brew_cask_packages="alt-tab android-platform-tools android-studio appcleaner chrome-remote-desktop-host discord firefox font-sf-mono-nerd-font github google-chrome iina iterm2 keka kekaexternalhelper linear-linear lunar maccy messenger mpv neovide nordvpn parsec qbittorrent rectangle slack stats visual-studio-code vlc"
+brew_cask_packages="alt-tab android-platform-tools android-studio appcleaner chrome-remote-desktop-host discord firefox font-sf-mono-nerd-font github google-chrome iina iterm2 keka kekaexternalhelper linear-linear lunar maccy messenger mpv neovide nordvpn openmtp parsec qbittorrent rectangle slack stats visual-studio-code vlc"
 
 cargo_packages="bat bunyan cargo-audit cargo-chef cargo-cmd cargo-cranky cargo-edit cargo-generate cargo-nextest cargo-tarpaulin cargo-tomlfmt cargo-update cargo-watch cross du-dust exa erdtree fnm git-delta hyperfine jaq just ripgrep skim starship tealdeer xh xq zoxide"
 
@@ -77,7 +77,7 @@ elif [ "$(uname)" == "Darwin" ]; then
     fi
 
     installer="brew"
-    operational "- Updating brew taps..."
+    operational "- Updating $installer taps..."
     for tap in $brew_taps; do
         operational "\t- Tapping $tap..."
         $installer tap -q $tap
