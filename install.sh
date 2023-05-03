@@ -40,7 +40,7 @@ apt_packages="build-essential clang cmake fd-find llvm libc++-dev libstdc++-10-d
 
 brew_taps="michaeleisel/homebrew-zld epk/epk"
 brew_packages="curl deno fd fzf llvm mas neovim postgresql@15 redis vim wget yarn zld"
-brew_cask_packages="alt-tab android-platform-tools android-studio appcleaner chrome-remote-desktop-host discord firefox font-sf-mono-nerd-font github google-chrome iina iterm2 keka kekaexternalhelper linear-linear lunar maccy messenger mpv neovide nordvpn openmtp parsec qbittorrent rectangle slack stats visual-studio-code vlc"
+brew_cask_packages="alt-tab android-platform-tools android-studio appcleaner chrome-remote-desktop-host discord firefox font-sf-mono-nerd-font github google-chrome iina iterm2 keka kekaexternalhelper linear-linear logi-options-plus lunar maccy messenger mpv neovide nordvpn openmtp parsec pdf-expert qbittorrent rectangle slack stats visual-studio-code vlc"
 
 cargo_packages="bat bunyan cargo-audit cargo-chef cargo-cmd cargo-cranky cargo-edit cargo-generate cargo-nextest cargo-tarpaulin cargo-tomlfmt cargo-update cargo-watch cross du-dust exa erdtree fnm git-delta hyperfine jaq just ripgrep skim starship tealdeer xh xq zoxide"
 
@@ -61,10 +61,7 @@ if [ "$(uname)" == "Linux" ]; then
     $installer update -y -qq
     $installer upgrade -y -qq
     $installer dist-upgrade -y -qq
-    for package in $common_packages; do
-        operational "\t- Installing $package..."
-        $installer install -qq $package >/dev/null
-    done
+    $installer install -qq $common_packages >/dev/null
 elif [ "$(uname)" == "Darwin" ]; then
     operational "- OS is macOS"
     # Install `brew` (brew.sh) if not installed
@@ -84,10 +81,12 @@ elif [ "$(uname)" == "Darwin" ]; then
     done
 
     operational "- Installing common packages..."
-    for package in $common_packages; do
-        operational "\t- Installing $package..."
-        $installer install -q $package
-    done
+    $installer update -q
+    $installer upgrade -q
+    $installer upgrade --cask --greedy -q
+    $installer install $common_packages
+    $installer autoremove -q
+    $installer cleanup -q
 fi
 
 if [ "$installer" == "UNKNOWN" ]; then
@@ -99,25 +98,16 @@ operational "- Installing $installer packages..."
 if [ "$(uname)" == "Linux" ]; then
     $installer update -qq >/dev/null
     $installer upgrade -qq >/dev/null
-    for package in $apt_packages; do
-        operational "\t- Installing $package..."
-        $installer install -qq $package >/dev/null
-    done
+    $installer install -qq $apt_packages >/dev/null
     $installer autoremove -qq --purge >/dev/null
     $installer -qq clean >/dev/null
 elif [ "$(uname)" == "Darwin" ]; then
     $installer update -q
     $installer upgrade -q
-    for package in $brew_packages; do
-        operational "\t- Installing $package..."
-        $installer install -q $package
-    done
+    $installer install -q $brew_packages
 
     operational "- Installing $installer cask packages..."
-    for package in $brew_cask_packages; do
-        operational "\t- Installing $package..."
-        $installer install --cask -q $package
-    done
+    $installer install --cask --greedy -q $brew_cask_packages
 fi
 
 if [ "$(uname)" == "Linux" ]; then
@@ -177,12 +167,8 @@ ln -fs $HOME/dotfiles/rust/config.toml $HOME/.cargo/config.toml
 operational "\t- Installing cargo packages..."
 # Install cargo-binstall first so as to not need to compile cargo packages but instead use binaries
 cargo install -q cargo-binstall
-for package in $cargo_packages; do
-    if ! [ -x "$(command -v $package)" ]; then
-        operational "\t\t- Installing $package..."
-        cargo_binstall $package
-    fi
-done
+source "$HOME/.cargo/bin"
+cargo_binstall $cargo_packages
 
 operational "- Installing Python..."
 curl -s https://pyenv.run | bash
@@ -215,7 +201,6 @@ operational "######################################"
 
 operational "- Linking zsh..."
 ln -fs $HOME/dotfiles/zsh/.zshrc $HOME/.zshrc
-ln -fs $HOME/dotfiles/zsh/.zsh_history $HOME/.zsh_history
 
 operational "- Linking vim..."
 ln -fs $HOME/dotfiles/vimfiles $HOME/vimfiles
@@ -260,9 +245,13 @@ operational "###           FINISHED!            ###"
 operational "###                                ###"
 operational "######################################"
 
-operational "############# Next Steps #############"
+if [ "$(uname)" == "Darwin" ]; then
+    operational "############# Next Steps #############"
 
-operational "- Install Xcode from the App Store"
-operational "- Install the following apps:"
-operational "\t- Amphetamine"
-operational "\t- Amphetamine Enhancer"
+    operational "- Install Xcode from the App Store"
+    operational "- Install the following apps:"
+    operational "\t- Amphetamine"
+    operational "\t- Amphetamine Enhancer"
+    operational "\t- Commander One Pro"
+    operational "\t- SPV4"
+fi

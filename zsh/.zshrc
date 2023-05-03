@@ -44,9 +44,6 @@ export HISTTIMEFORMAT="[%F %T] "
 # Zoxide
 eval "$(zoxide init zsh)"
 
-# Nim
-export PATH=$HOME/.nimble/bin:$PATH
-
 # fnm
 export PATH=$HOME/.fnm:$PATH
 eval "$(fnm env --use-on-cd)"
@@ -58,7 +55,7 @@ export PATH="$DENO_INSTALL/bin:$PATH"
 # Python (anaconda3)
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/home/satvik/anaconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+__conda_setup="$('/home/satvik/anaconda3/bin/conda' 'shell.zsh' 'hook' 2>/dev/null)"
 if [ $? -eq 0 ]; then
     eval "$__conda_setup"
 else
@@ -86,16 +83,16 @@ alias ls="exa -la --git --icons -la"
 alias l="ls"
 alias rm="rm -rf"
 if [[ "$(uname)" == "Linux" ]]; then
-  # If we find the commands below, that means they were installed
-  # via `cargo` and not `apt`
-  if ! [ -x "$(command -v bat)" ]; then
-    alias cat="batcat"
-  else
-    alias cat="bat"
-  fi
-  if ! [ -x "$(command -v fd)" ]; then
-    alias fd="fdfind"
-  fi
+    # If we find the commands below, that means they were installed
+    # via `cargo` and not `apt`
+    if ! [ -x "$(command -v bat)" ]; then
+        alias cat="batcat"
+    else
+        alias cat="bat"
+    fi
+    if ! [ -x "$(command -v fd)" ]; then
+        alias fd="fdfind"
+    fi
 elif [[ "$(uname)" == "Darwin" ]]; then
     alias cat="bat"
 fi
@@ -118,7 +115,7 @@ elif [[ "$(uname)" == "Darwin" ]]; then
     alias bi="brew install"
     alias bic="brew install --cask"
     alias bu="brew uninstall"
-    alias bu="brew uninstall --cask"
+    alias buc="brew uninstall --cask"
     alias bug="brew update && brew upgrade"
     alias bs="brew search"
     alias bt="brew tap"
@@ -166,10 +163,9 @@ HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS='i'
 export MANPAGER="sh -c 'col -bx | bat -l man -p'"
 
 # OpenSSL
-if [[ "$(uname)" == "Darwin" ]]; then
-    export PATH="/usr/local/opt/openssl@1.1/bin:$PATH"
-    export LDFLAGS="-L/usr/local/opt/openssl@1.1/lib"
-    export CPPFLAGS="-I/usr/local/opt/openssl@1.1/include"
-    export PKG_CONFIG_PATH="/usr/local/opt/openssl@1.1/lib/pkgconfig"
-fi
-
+# if [[ "$(uname)" == "Darwin" ]]; then
+#     export PATH="/usr/local/opt/openssl@1.1/bin:$PATH"
+#     export LDFLAGS="-L/usr/local/opt/openssl@1.1/lib"
+#     export CPPFLAGS="-I/usr/local/opt/openssl@1.1/include"
+#     export PKG_CONFIG_PATH="/usr/local/opt/openssl@1.1/lib/pkgconfig"
+# fi
