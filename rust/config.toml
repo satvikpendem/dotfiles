@@ -8,7 +8,7 @@ rustflags = [
 ]
 
 [target.aarch64-apple-darwin]
-# zld linker for macOS
+# # zld linker for macOS
 # rustflags = ["-C", "link-arg=-fuse-ld=/opt/homebrew/bin/zld"]
 # mold/sold linker
 linker = "/usr/bin/clang"

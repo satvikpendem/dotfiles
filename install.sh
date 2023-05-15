@@ -34,15 +34,15 @@ function cargo_binstall {
     cargo binstall --no-confirm --log-level=error $1
 }
 
-common_packages="curl git htop ripgrep unzip vim wget zsh"
+common_packages="cmake curl git htop llvm ripgrep unzip vim wget zsh"
 
-apt_packages="build-essential clang cmake fd-find llvm libc++-dev libstdc++-10-dev libssl-dev pkg-config zlib1g zlib1g-dev"
+apt_packages="build-essential clang fd-find libc++-dev libstdc++-10-dev libssl-dev pkg-config zlib1g zlib1g-dev"
 
 brew_taps="michaeleisel/homebrew-zld epk/epk"
 brew_packages="bat deno fd llvm neovim xh zoxide zld"
-brew_cask_packages="alt-tab appcleaner chrome-remote-desktop-host firefox font-sf-mono-nerd-font github google-chrome iterm2 linear-linear lunar messenger mpv neovide nordvpn parsec qbittorrent rectangle slack stats visual-studio-code zoom"
+brew_cask_packages="alt-tab appcleaner chrome-remote-desktop-host firefox font-sf-mono-nerd-font github google-chrome iterm2 linear-linear lunar maccy messenger mpv neovide nordvpn parsec qbittorrent rectangle slack stats visual-studio-code"
 
-cargo_packages="bat cargo-audit cargo-cranky cargo-do cargo-edit cargo-expand cargo-nextest cargo-tarpaulin cargo-watch erdtree exa fnm hyperfine git-delta skim starship tealdeer xh zoxide"
+cargo_packages="bat cargo-audit cargo-cranky cargo-do cargo-edit cargo-expand cargo-nextest cargo-tarpaulin cargo-upgrade cargo-watch erdtree exa fnm hyperfine git-delta skim starship tealdeer xh zoxide"
 
 installer="UNKNOWN"
 
@@ -91,7 +91,10 @@ if [ "$(uname)" == "Linux" ]; then
     $installer autoremove -qq --purge >/dev/null
     $installer -qq clean >/dev/null
 elif [ "$(uname)" == "Darwin" ]; then
-    $installer tap -q $brew_taps
+    for tap in $brew_taps; do
+        operational "\t- Tapping $tap..."
+        $installer tap -q $tap
+    done
 
     $installer update -q
     $installer upgrade -q
@@ -124,10 +127,12 @@ mold_url="https://github.com/bluewhalesystems/sold.git"
 operational "- Installing mold/sold linker..."
 rm -rf $HOME/mold
 git clone $mold_url $HOME/mold
-cd $HOME/mold
-mkdir build
-cd build
-sudo ../install-build-deps.sh
+mkdir $HOME/mold/build
+cd $HOME/mold/build
+# Only need to install build dependencies on Linux
+if [ "$(uname)" == "Linux" ]; then
+    sudo ../install-build-deps.sh
+fi
 cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=c++ ..
 # Different ways to access number of CPU cores/threads on Linux versus macOS
 if [ "$(uname)" == "Linux" ]; then
@@ -152,14 +157,14 @@ source "$HOME/.cargo/env"
 operational "\t- Installing preliminary cargo packages..."
 # Cargo config is dependent on sccache
 operational "\t\t- Installing sccache..."
-cargo install -q sccache
+cargo install sccache
 
 operational "\t- Linking cargo config..."
 ln -fs $HOME/dotfiles/rust/config.toml $HOME/.cargo/config.toml
 
 operational "\t- Installing cargo packages..."
 # Install cargo-binstall first so as to not need to compile cargo packages but instead use binaries
-cargo install -q cargo-binstall
+cargo install cargo-binstall
 source "$HOME/.cargo/bin"
 cargo_binstall $cargo_packages
 
@@ -222,3 +227,8 @@ operational "######################################"
 
 operational "- Install the following:"
 operational "\t- Smooth Video Project (SVP)"
+
+operational "- Configure the following:"
+operational "\t- iTerm2"
+operational "\t- VSCode"
+operational "\t- Remap Caps Lock to Escape"
