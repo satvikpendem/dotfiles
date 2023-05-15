@@ -34,14 +34,15 @@ function cargo_binstall {
     cargo binstall --no-confirm --log-level=error $1
 }
 
-common_packages="curl git htop httpie nim ripgrep unzip vim wget zsh"
+common_packages="curl git htop ripgrep unzip vim wget zsh"
 
 apt_packages="build-essential clang cmake fd-find llvm libc++-dev libstdc++-10-dev libssl-dev pkg-config zlib1g zlib1g-dev"
 
-brew_packages="bat curl deno exa fd llvm neovim vim wget xh zoxide zld"
-brew_cask_packages="alt-tab appcleaner chrome-remote-desktop-host cloudflare-warp firefox flutter github google-chrome iterm2 linear-linear lunar macs-fan-control messenger moonlight mpv neovide nightfall nordvpn parsec qbittorrent rectangle slack stats visual-studio-code zoom"
+brew_taps="michaeleisel/homebrew-zld epk/epk"
+brew_packages="bat deno fd llvm neovim xh zoxide zld"
+brew_cask_packages="alt-tab appcleaner chrome-remote-desktop-host firefox font-sf-mono-nerd-font github google-chrome iterm2 linear-linear lunar messenger mpv neovide nordvpn parsec qbittorrent rectangle slack stats visual-studio-code zoom"
 
-cargo_packages="bat cargo-audit cargo-cranky cargo-do cargo-edit cargo-expand cargo-nextest cargo-tarpaulin cargo-watch exa fnm hyperfine git-delta skim starship tealdeer xh zoxide"
+cargo_packages="bat cargo-audit cargo-cranky cargo-do cargo-edit cargo-expand cargo-nextest cargo-tarpaulin cargo-watch erdtree exa fnm hyperfine git-delta skim starship tealdeer xh zoxide"
 
 installer="UNKNOWN"
 
@@ -60,10 +61,7 @@ if [ "$(uname)" == "Linux" ]; then
     $installer update -y -qq
     $installer upgrade -y -qq
     $installer dist-upgrade -y -qq
-    for package in $common_packages; do
-        operational "\t- Installing $package..."
-        $installer install -qq $package >/dev/null
-    done
+    $installer install -y -qq $common_packages
 elif [ "$(uname)" == "Darwin" ]; then
     operational "- OS is macOS"
     # Install `brew` (brew.sh) if not installed
@@ -77,10 +75,7 @@ elif [ "$(uname)" == "Darwin" ]; then
 
     installer="brew"
     operational "- Installing common packages..."
-    for package in $common_packages; do
-        operational "\t- Installing $package..."
-        $installer install -q $package
-    done
+    $installer install -q $common_packages
 fi
 
 if [ "$installer" == "UNKNOWN" ]; then
@@ -92,28 +87,18 @@ operational "- Installing $installer packages..."
 if [ "$(uname)" == "Linux" ]; then
     $installer update -qq >/dev/null
     $installer upgrade -qq >/dev/null
-    for package in $apt_packages; do
-        operational "\t- Installing $package..."
-        $installer install -qq $package >/dev/null
-    done
+    $installer install -qq $common_packages
     $installer autoremove -qq --purge >/dev/null
     $installer -qq clean >/dev/null
 elif [ "$(uname)" == "Darwin" ]; then
-    # Add tap for zld, a linker for Rust on macOS
-    $installer tap -q michaeleisel/homebrew-zld
+    $installer tap -q $brew_taps
 
     $installer update -q
     $installer upgrade -q
-    for package in $brew_packages; do
-        operational "\t- Installing $package..."
-        $installer install -q $package
-    done
+    $installer install -q --no-quarantine $brew_packages
 
     operational "- Installing $installer cask packages..."
-    for package in $brew_cask_packages; do
-        operational "\t- Installing $package..."
-        $installer install --cask -q $package
-    done
+    $installer install --cask -q --no-quarantine $brew_cask_packages
 fi
 
 if [ "$(uname)" == "Linux" ]; then
@@ -135,7 +120,7 @@ operational "######################################"
 # Install mold/sold linker
 # https://github.com/rui314/mold
 # https://github.com/bluewhalesystems/sold - superset of `mold`, supports macOS/iOS which mold itself does not
-mold_url="https://github.com/bluewhalesystems/sold"
+mold_url="https://github.com/bluewhalesystems/sold.git"
 operational "- Installing mold/sold linker..."
 rm -rf $HOME/mold
 git clone $mold_url $HOME/mold
@@ -175,15 +160,8 @@ ln -fs $HOME/dotfiles/rust/config.toml $HOME/.cargo/config.toml
 operational "\t- Installing cargo packages..."
 # Install cargo-binstall first so as to not need to compile cargo packages but instead use binaries
 cargo install -q cargo-binstall
-for package in $cargo_packages; do
-    if ! [ -x "$(command -v $package)" ]; then
-        operational "\t\t- Installing $package..."
-        cargo_binstall $package
-    fi
-done
-
-operational "- Installing Python..."
-curl -s https://pyenv.run | bash
+source "$HOME/.cargo/bin"
+cargo_binstall $cargo_packages
 
 if [ "$(uname)" == "Linux" ]; then
     operational "- Installing Deno..."
@@ -223,7 +201,9 @@ operational "###                                ###"
 operational "######################################"
 
 operational "- Hushing login prompts..."
-touch $HOME/.hushlogin
+if [ "$(uname)" == "Linux" ]; then
+    touch $HOME/.hushlogin
+fi
 
 operational "- Changing shell to zsh..."
 chsh -s $(which zsh)
@@ -233,3 +213,12 @@ operational "###                                ###"
 operational "###           FINISHED!            ###"
 operational "###                                ###"
 operational "######################################"
+
+operational "######################################"
+operational "###                                ###"
+operational "###          NEXT STEPS            ###"
+operational "###                                ###"
+operational "######################################"
+
+operational "- Install the following:"
+operational "\t- Smooth Video Project (SVP)"
