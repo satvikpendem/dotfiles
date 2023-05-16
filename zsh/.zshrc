@@ -1,5 +1,6 @@
 if [[ "$(uname)" == "Darwin" ]]; then
     # Homebrew
+    export PATH="/opt/homebrew/bin:$PATH"
     export PATH="/opt/homebrew/opt/curl/bin:$PATH"
 fi
 
@@ -50,9 +51,6 @@ export HISTTIMEFORMAT="[%F %T] "
 # Zoxide
 eval "$(zoxide init zsh)"
 
-# Nim
-export PATH=$HOME/.nimble/bin:$PATH
-
 # fnm
 export PATH=$HOME/.fnm:$PATH
 eval "$(fnm env --use-on-cd)"
@@ -60,26 +58,6 @@ eval "$(fnm env --use-on-cd)"
 # Deno
 export DENO_INSTALL=$HOME/.deno
 export PATH="$DENO_INSTALL/bin:$PATH"
-
-# Python (anaconda3)
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/home/satvik/anaconda3/bin/conda' 'shell.zsh' 'hook' 2>/dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "$HOME/anaconda3/etc/profile.d/conda.sh" ]; then
-        . "$HOME/anaconda3/etc/profile.d/conda.sh"
-    else
-        export PATH="/home/satvik/anaconda3/bin:$PATH"
-    fi
-fi
-unset __conda_setup
-# <<< conda initialize <<<
-
-export PYENV_ROOT="$HOME/.pyenv"
-export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
 
 # Default editor for git and others
 export EDITOR=vim

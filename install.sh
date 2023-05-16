@@ -42,7 +42,7 @@ brew_taps="michaeleisel/homebrew-zld epk/epk"
 brew_packages="deno fd llvm neovim zld"
 brew_cask_packages="alt-tab appcleaner chrome-remote-desktop-host firefox font-sf-mono-nerd-font github google-chrome iterm2 linear-linear lunar maccy messenger neovide nordvpn parsec qbittorrent rectangle slack stats visual-studio-code"
 
-cargo_packages="bat cargo-audit cargo-cranky cargo-do cargo-edit cargo-expand cargo-nextest cargo-tarpaulin cargo-upgrade cargo-watch erdtree exa fnm hyperfine git-delta ripgrep skim starship tealdeer xh zoxide"
+cargo_packages="bat cargo-audit cargo-cranky cargo-do cargo-edit cargo-expand cargo-nextest cargo-tarpaulin cargo-update cargo-watch erdtree exa fnm hyperfine git-delta ripgrep skim starship tealdeer xh zoxide"
 
 installer="UNKNOWN"
 
