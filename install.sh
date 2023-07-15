@@ -173,6 +173,13 @@ if [ "$(uname)" == "Linux" ]; then
     curl -fsSL https://deno.land/x/install/install.sh | sh
 fi
 
+# Flutter
+cd ~
+git clone https://github.com/flutter/flutter.git -b stable
+export PATH="$PATH:~/flutter/bin"
+flutter precache
+flutter doctor
+
 operational "- Finished installing programming languages"
 echo -e "\n"
 
