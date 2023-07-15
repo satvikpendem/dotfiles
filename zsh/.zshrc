@@ -59,6 +59,9 @@ eval "$(fnm env --use-on-cd)"
 export DENO_INSTALL=$HOME/.deno
 export PATH="$DENO_INSTALL/bin:$PATH"
 
+# Flutter
+export PATH=$HOME/flutter/bin:$PATH
+
 # Default editor for git and others
 export EDITOR=vim
 
