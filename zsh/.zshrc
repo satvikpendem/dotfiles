@@ -81,7 +81,7 @@ if [[ "$(uname)" == "Linux" ]]; then
 elif [[ "$(uname)" == "Darwin" ]]; then
     alias cat="bat"
 fi
-alias tree="exa --tree"
+alias tree="erd -y inverted -H -I"
 alias md="mkdir -p"
 alias tl="tldr"
 alias f="sk --preview 'bat --color=always --style numbers,changes {}'"
