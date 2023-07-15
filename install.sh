@@ -208,7 +208,7 @@ echo -e "\n"
 
 operational "######################################"
 operational "###                                ###"
-operational "###         MISCELLANEOUS          ###"
+operational "###          MISCELLANEA           ###"
 operational "###                                ###"
 operational "######################################"
 
@@ -219,6 +219,29 @@ fi
 
 operational "- Changing shell to zsh..."
 chsh -s $(which zsh)
+
+if [ "$(uname)" == "Darwin" ]; then
+    operational "- Disabling macOS quirks..."
+    # Disable press-and-hold for keys in favor of key repeat
+    defaults write NSGlobalDomain "ApplePressAndHoldEnabled" -bool "false"
+
+    # Finder
+    defaults write com.apple.finder "QuitMenuItem" -bool "true"
+    defaults write NSGlobalDomain "AppleShowAllExtensions" -bool "true"
+    defaults write com.apple.finder "ShowPathbar" -bool "true"
+    defaults write com.apple.finder "AppleShowAllFiles" -bool "true"
+    defaults write com.apple.finder "_FXSortFoldersFirst" -bool "true"
+    defaults write com.apple.universalaccess "showWindowTitlebarIcons" -bool "true"
+    killall Finder
+
+    # Safari
+    defaults write com.apple.safari "ShowFullURLInSmartSearchField" -bool "true" && killall Safari
+
+    # Miscellanea
+    defaults write com.apple.screencapture "disable-shadow" -bool "true"
+    defaults write com.apple.dock "autohide-delay" -float "0" && killall Dock
+    chflags nohidden ~/Library/
+fi
 
 operational "######################################"
 operational "###                                ###"
