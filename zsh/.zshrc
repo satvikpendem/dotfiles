@@ -1,6 +1,10 @@
 if [[ "$(uname)" == "Darwin" ]]; then
     # Homebrew
+    export PATH="/opt/homebrew/bin:$PATH"
     export PATH="/opt/homebrew/opt/curl/bin:$PATH"
+    
+    # Ruby (for XCode)
+    export PATH="/opt/homebrew/lib/ruby/gems/3.2.0/bin:$PATH"
 fi
 
 # Rust
@@ -56,9 +60,6 @@ export HISTTIMEFORMAT="[%F %T] "
 # Zoxide
 eval "$(zoxide init zsh)"
 
-# Nim
-export PATH=$HOME/.nimble/bin:$PATH
-
 # fnm
 export PATH=$HOME/.fnm:$PATH
 eval "$(fnm env --use-on-cd)"
@@ -67,25 +68,8 @@ eval "$(fnm env --use-on-cd)"
 export DENO_INSTALL=$HOME/.deno
 export PATH="$DENO_INSTALL/bin:$PATH"
 
-# Python (anaconda3)
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/home/satvik/anaconda3/bin/conda' 'shell.zsh' 'hook' 2>/dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "$HOME/anaconda3/etc/profile.d/conda.sh" ]; then
-        . "$HOME/anaconda3/etc/profile.d/conda.sh"
-    else
-        export PATH="/home/satvik/anaconda3/bin:$PATH"
-    fi
-fi
-unset __conda_setup
-# <<< conda initialize <<<
-
-export PYENV_ROOT="$HOME/.pyenv"
-export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
+# Flutter
+export PATH=$HOME/flutter/bin:$PATH
 
 # Default editor for git and others
 export EDITOR=vim
@@ -109,7 +93,7 @@ if [[ "$(uname)" == "Linux" ]]; then
 elif [[ "$(uname)" == "Darwin" ]]; then
     alias cat="bat"
 fi
-alias tree="exa --tree"
+alias tree="erd -y inverted -H -I"
 alias md="mkdir -p"
 alias tl="tldr"
 alias f="sk --preview 'bat --color=always --style numbers,changes {}'"
@@ -236,3 +220,9 @@ HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS='i'
 
 # Use bat with manpages
 export MANPAGER="sh -c 'col -bx | bat -l man -p'"
+
+# iTerm2 integration
+
+if [[ "$(uname)" == "Darwin" ]]; then
+    test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+fi
