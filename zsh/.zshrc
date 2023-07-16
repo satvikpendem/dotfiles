@@ -25,6 +25,12 @@ eval "$(starship init zsh)"
 # Haskell
 [ -f "/home/satvik/.ghcup/env" ] && source "/home/satvik/.ghcup/env" # ghcup-env
 
+# Python
+export PATH=$HOME/.local/bin:$PATH
+
+# WSL
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/lib/wsl/lib
+
 # Bind ctrl+key actions
 ### ctrl+arrows
 bindkey "\e[1;5C" forward-word
