@@ -2,6 +2,9 @@ if [[ "$(uname)" == "Darwin" ]]; then
     # Homebrew
     export PATH="/opt/homebrew/bin:$PATH"
     export PATH="/opt/homebrew/opt/curl/bin:$PATH"
+    
+    # Ruby (for XCode)
+    export PATH="/opt/homebrew/lib/ruby/gems/3.2.0/bin:$PATH"
 fi
 
 # Rust
@@ -211,3 +214,9 @@ HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS='i'
 
 # Use bat with manpages
 export MANPAGER="sh -c 'col -bx | bat -l man -p'"
+
+# iTerm2 integration
+
+if [[ "$(uname)" == "Darwin" ]]; then
+    test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+fi
