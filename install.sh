@@ -34,14 +34,16 @@ function cargo_binstall {
     cargo binstall --no-confirm --log-level=error $1
 }
 
-common_packages="curl git htop httpie nim ripgrep unzip vim wget zsh"
+common_packages="cmake curl git htop llvm unzip vim wget zsh"
 
-apt_packages="build-essential clang cmake fd-find llvm libc++-dev libstdc++-10-dev libssl-dev pkg-config zlib1g zlib1g-dev"
+apt_packages="build-essential clang fd-find libc++-dev libstdc++-10-dev libssl-dev pkg-config zlib1g zlib1g-dev"
 
-brew_packages="bat curl deno exa fd llvm neovim vim wget xh zoxide zld"
-brew_cask_packages="alt-tab appcleaner chrome-remote-desktop-host cloudflare-warp firefox flutter github google-chrome iterm2 linear-linear lunar macs-fan-control messenger moonlight mpv neovide nightfall nordvpn parsec qbittorrent rectangle slack stats visual-studio-code zoom"
+brew_taps="michaeleisel/homebrew-zld epk/epk"
+brew_packages="deno fd llvm neovim ruby yt-dlp zld"
+brew_cask_packages="alt-tab appcleaner chrome-remote-desktop-host discord firefox font-sf-mono-nerd-font github google-chrome iterm2 keka kekaexternalhelper linear-linear lunar maccy messenger neovide nordvpn parsec qbittorrent rectangle slack stats visual-studio-code"
+brew_overwrite_packages="ruby"
 
-cargo_packages="bat cargo-audit cargo-cranky cargo-do cargo-edit cargo-expand cargo-nextest cargo-tarpaulin cargo-watch exa fnm hyperfine git-delta skim starship tealdeer xh zoxide"
+cargo_packages="bat bunyan cargo-audit cargo-edit cargo-chef cargo-cmd cargo-cranky cargo-expand cargo-nextest cargo-tarpaulin dust erdtree exa fnm git-delta hyperfine jaq just live-server rewrk sccache skim sqlx starship tealdeer wasm-pack watchexec xh xq zoxide"
 
 installer="UNKNOWN"
 
@@ -60,10 +62,7 @@ if [ "$(uname)" == "Linux" ]; then
     $installer update -y -qq
     $installer upgrade -y -qq
     $installer dist-upgrade -y -qq
-    for package in $common_packages; do
-        operational "\t- Installing $package..."
-        $installer install -qq $package >/dev/null
-    done
+    $installer install -y -qq $common_packages
 elif [ "$(uname)" == "Darwin" ]; then
     operational "- OS is macOS"
     # Install `brew` (brew.sh) if not installed
@@ -77,10 +76,7 @@ elif [ "$(uname)" == "Darwin" ]; then
 
     installer="brew"
     operational "- Installing common packages..."
-    for package in $common_packages; do
-        operational "\t- Installing $package..."
-        $installer install -q $package
-    done
+    $installer install -q $common_packages
 fi
 
 if [ "$installer" == "UNKNOWN" ]; then
@@ -92,28 +88,25 @@ operational "- Installing $installer packages..."
 if [ "$(uname)" == "Linux" ]; then
     $installer update -qq >/dev/null
     $installer upgrade -qq >/dev/null
-    for package in $apt_packages; do
-        operational "\t- Installing $package..."
-        $installer install -qq $package >/dev/null
-    done
+    $installer install -qq $common_packages
     $installer autoremove -qq --purge >/dev/null
     $installer -qq clean >/dev/null
 elif [ "$(uname)" == "Darwin" ]; then
-    # Add tap for zld, a linker for Rust on macOS
-    $installer tap -q michaeleisel/homebrew-zld
+    for tap in $brew_taps; do
+        operational "\t- Tapping $tap..."
+        $installer tap -q $tap
+    done
 
     $installer update -q
     $installer upgrade -q
-    for package in $brew_packages; do
-        operational "\t- Installing $package..."
-        $installer install -q $package
-    done
+    operational "\t- Installing $installer packages..."
+    $installer install -q --no-quarantine $brew_packages
 
     operational "- Installing $installer cask packages..."
-    for package in $brew_cask_packages; do
-        operational "\t- Installing $package..."
-        $installer install --cask -q $package
-    done
+    $installer install --cask -q --no-quarantine $brew_cask_packages
+
+    operational "- Installing $installer override packages..."
+    $installer link --overwrite --force $brew_overwrite_packages
 fi
 
 if [ "$(uname)" == "Linux" ]; then
@@ -135,14 +128,16 @@ operational "######################################"
 # Install mold/sold linker
 # https://github.com/rui314/mold
 # https://github.com/bluewhalesystems/sold - superset of `mold`, supports macOS/iOS which mold itself does not
-mold_url="https://github.com/bluewhalesystems/sold"
+mold_url="https://github.com/bluewhalesystems/sold.git"
 operational "- Installing mold/sold linker..."
 rm -rf $HOME/mold
 git clone $mold_url $HOME/mold
-cd $HOME/mold
-mkdir build
-cd build
-sudo ../install-build-deps.sh
+mkdir $HOME/mold/build
+cd $HOME/mold/build
+# Only need to install build dependencies on Linux
+if [ "$(uname)" == "Linux" ]; then
+    sudo ../install-build-deps.sh
+fi
 cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=c++ ..
 # Different ways to access number of CPU cores/threads on Linux versus macOS
 if [ "$(uname)" == "Linux" ]; then
@@ -167,28 +162,28 @@ source "$HOME/.cargo/env"
 operational "\t- Installing preliminary cargo packages..."
 # Cargo config is dependent on sccache
 operational "\t\t- Installing sccache..."
-cargo install -q sccache
+cargo install sccache
 
 operational "\t- Linking cargo config..."
 ln -fs $HOME/dotfiles/rust/config.toml $HOME/.cargo/config.toml
 
 operational "\t- Installing cargo packages..."
 # Install cargo-binstall first so as to not need to compile cargo packages but instead use binaries
-cargo install -q cargo-binstall
-for package in $cargo_packages; do
-    if ! [ -x "$(command -v $package)" ]; then
-        operational "\t\t- Installing $package..."
-        cargo_binstall $package
-    fi
-done
-
-operational "- Installing Python..."
-curl -s https://pyenv.run | bash
+cargo install cargo-binstall
+source "$HOME/.cargo/bin"
+cargo_binstall $cargo_packages
 
 if [ "$(uname)" == "Linux" ]; then
     operational "- Installing Deno..."
     curl -fsSL https://deno.land/x/install/install.sh | sh
 fi
+
+# Flutter
+cd ~
+git clone https://github.com/flutter/flutter.git -b stable
+export PATH="$PATH:~/flutter/bin"
+flutter precache
+flutter doctor
 
 operational "- Finished installing programming languages"
 echo -e "\n"
@@ -218,18 +213,57 @@ echo -e "\n"
 
 operational "######################################"
 operational "###                                ###"
-operational "###         MISCELLANEOUS          ###"
+operational "###          MISCELLANEA           ###"
 operational "###                                ###"
 operational "######################################"
 
 operational "- Hushing login prompts..."
-touch $HOME/.hushlogin
+if [ "$(uname)" == "Linux" ]; then
+    touch $HOME/.hushlogin
+fi
 
 operational "- Changing shell to zsh..."
 chsh -s $(which zsh)
+
+if [ "$(uname)" == "Darwin" ]; then
+    operational "- Disabling macOS quirks..."
+    # Disable press-and-hold for keys in favor of key repeat
+    defaults write NSGlobalDomain "ApplePressAndHoldEnabled" -bool "false"
+
+    # Finder
+    defaults write com.apple.finder "QuitMenuItem" -bool "true"
+    defaults write NSGlobalDomain "AppleShowAllExtensions" -bool "true"
+    defaults write com.apple.finder "ShowPathbar" -bool "true"
+    defaults write com.apple.finder "AppleShowAllFiles" -bool "true"
+    defaults write com.apple.finder "_FXSortFoldersFirst" -bool "true"
+    defaults write com.apple.universalaccess "showWindowTitlebarIcons" -bool "true"
+    killall Finder
+
+    # Safari
+    defaults write com.apple.safari "ShowFullURLInSmartSearchField" -bool "true" && killall Safari
+
+    # Miscellanea
+    defaults write com.apple.screencapture "disable-shadow" -bool "true"
+    defaults write com.apple.dock "autohide-delay" -float "0" && killall Dock
+    chflags nohidden ~/Library/
+fi
 
 operational "######################################"
 operational "###                                ###"
 operational "###           FINISHED!            ###"
 operational "###                                ###"
 operational "######################################"
+
+operational "######################################"
+operational "###                                ###"
+operational "###          NEXT STEPS            ###"
+operational "###                                ###"
+operational "######################################"
+
+operational "- Install the following:"
+operational "\t- Smooth Video Project (SVP)"
+
+operational "- Configure the following:"
+operational "\t- iTerm2"
+operational "\t- VSCode"
+operational "\t- Remap Caps Lock to Escape"
