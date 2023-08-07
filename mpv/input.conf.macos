@@ -1,0 +1,10 @@
+# Fix for macOS: https://atlassc.net/2022/01/05/anime4k-on-m1-max/
+CTRL+0 no-osd change-list glsl-shaders clr ""; show-text "GLSL shaders cleared"
+CTRL+1 no-osd change-list glsl-shaders clr ""; apply-profile "Anime4K_Fast_A_A"; show-text "Profile: AAnime4K_Fast_A_A"
+CTRL+2 no-osd change-list glsl-shaders clr ""; apply-profile "FSR"; show-text "Profile: FSR"
+CTRL+3 no-osd change-list glsl-shaders clr ""; apply-profile "AiUpscale_LineArt"; show-text "Profile: AiUpscale_LineArt"
+CTRL+4 no-osd change-list glsl-shaders clr ""; apply-profile "AiUpscale_Photo"; show-text "Profile: AiUpscale_Photo"
+
+] add speed 0.25
+[ add speed -0.25
+\ set speed 1.0
