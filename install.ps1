@@ -57,6 +57,11 @@ winget.exe install 9PF4KZ2VN4W9 # TranslucentTB
 winget.exe install 9MTFTXSJ9M7F # RoundedTB
 winget.exe install Adobe.Acrobat.Reader.64-bit
 
+pip3 install --upgrade pip
+pip3 install --upgrade setuptools
+pip3 install --upgrade wheel
+pip3 install git+https://github.com/jordimas/whisper-ctranslate2.git
+
 # mpv
 # Note, mpv comes from SVP4: https://www.svp-team.com/files/svp4-latest.php?offline
 # Copy mpv files to $HOME\AppData\Roaming\mpv
