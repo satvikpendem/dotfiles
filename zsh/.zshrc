@@ -76,7 +76,7 @@ export EDITOR=vim
 
 # Aliases
 alias vim="nvim"
-alias ls="exa -la --git --icons -la"
+alias ls="eza -la --git --icons -la"
 alias l="ls"
 alias rm="rm -rf"
 if [[ "$(uname)" == "Linux" ]]; then
