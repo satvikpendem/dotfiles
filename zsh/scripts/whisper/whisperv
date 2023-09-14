@@ -1,0 +1,154 @@
+# Check if whisper-ctranslate2 is installed
+if ! command -v whisper-ctranslate2 &>/dev/null; then
+    echo "whisper-ctranslate2 is not installed. Please install it with 'pip3 install git+https://github.com/jordimas/whisper-ctranslate2.git'"
+    exit 1
+fi
+
+# Check if ffmpeg is installed
+if ! command -v ffmpeg &>/dev/null; then
+    if [[ "$(uname)" == "Linux" ]]; then
+        echo "ffmpeg is not installed. Please install it with $(sudo apt install ffmpeg)"
+    fi
+    if [[ "$(uname)" == "Darwin" ]]; then
+        echo "ffmpeg is not installed. Please install it with $(brew install ffmpeg)"
+    fi
+    exit 1
+fi
+
+# Default argument values
+model="large-v2"
+task="transcribe"
+processing_unit="auto"
+subtitles_only=false
+language="English"
+
+# Valid sets
+valid_models=("tiny" "tiny.en" "base" "base.en" "small" "small.en" "medium" "medium.en" "large" "large-v1" "large-v2")
+valid_tasks=("transcribe" "translate")
+valid_processing_units=("auto" "cpu" "cuda")
+valid_languages=("af" "am" "ar" "as" "az" "ba" "be" "bg" "bn" "bo" "br" "bs" "ca" "cs" "cy" "da" "de" "el" "en" "es" "et" "eu" "fa" "fi" "fo" "fr" "gl" "gu" "ha" "haw" "he" "hi" "hr" "ht" "hu" "hy" "id" "is" "it" "ja" "jw" "ka" "kk" "km" "kn" "ko" "la" "lb" "ln" "lo" "lt" "lv" "mg" "mi" "mk" "ml" "mn" "mr" "ms" "mt" "my" "ne" "nl" "nn" "no" "oc" "pa" "pl" "ps" "pt" "ro" "ru" "sa" "sd" "si" "sk" "sl" "sn" "so" "sq" "sr" "su" "sv" "sw" "ta" "te" "tg" "th" "tk" "tl" "tr" "tt" "uk" "ur" "uz" "vi" "yi" "yo" "zh" "Afrikaans" "Albanian" "Amharic" "Arabic" "Armenian" "Assamese" "Azerbaijani" "Bashkir" "Basque" "Belarusian" "Bengali" "Bosnian" "Breton" "Bulgarian" "Burmese" "Castilian" "Catalan" "Chinese" "Croatian" "Czech" "Danish" "Dutch" "English" "Estonian" "Faroese" "Finnish" "Flemish" "French" "Galician" "Georgian" "German" "Greek" "Gujarati" "Haitian" "Haitian Creole" "Hausa" "Hawaiian" "Hebrew" "Hindi" "Hungarian" "Icelandic" "Indonesian" "Italian" "Japanese" "Javanese" "Kannada" "Kazakh" "Khmer" "Korean" "Lao" "Latin" "Latvian" "Letzeburgesch" "Lingala" "Lithuanian" "Luxembourgish" "Macedonian" "Malagasy" "Malay" "Malayalam" "Maltese" "Maori" "Marathi" "Moldavian" "Moldovan" "Mongolian" "Myanmar" "Nepali" "Norwegian" "Nynorsk" "Occitan" "Panjabi" "Pashto" "Persian" "Polish" "Portuguese" "Punjabi" "Pushto" "Romanian" "Russian" "Sanskrit" "Serbian" "Shona" "Sindhi" "Sinhala" "Sinhalese" "Slovak" "Slovenian" "Somali" "Spanish" "Sundanese" "Swahili" "Swedish" "Tagalog" "Tajik" "Tamil" "Tatar" "Telugu" "Thai" "Tibetan" "Turkish" "Turkmen" "Ukrainian" "Urdu" "Uzbek" "Valencian" "Vietnamese" "Welsh" "Yiddish" "Yoruba")
+
+containsElement() {
+    local e match="$1"
+    shift
+    for e; do [[ "$e" == "$match" ]] && exit 0; done
+    exit 1
+}
+
+while [[ $# -gt 0 ]]; do
+    key="$1"
+    case $key in
+    -f | --file)
+        file="$2"
+        shift
+        shift
+        ;;
+    -m | --model)
+        model="$2"
+        shift
+        shift
+        ;;
+    -p | --processing-unit)
+        processing_unit="$2"
+        shift
+        shift
+        ;;
+    -s | --subtitles-only)
+        subtitles_only=true
+        shift
+        ;;
+    -t | --task)
+        task="$2"
+        shift
+        shift
+        ;;
+    -l | --language)
+        language="$2"
+        shift
+        shift
+        ;;
+    *)
+        echo "Unknown argument: $key"
+        exit 1
+        ;;
+    esac
+done
+
+# Validate that the file is provided
+if [[ -z "$file" ]]; then
+    echo "No file specified"
+    exit 1
+fi
+
+# Validate that the file exists
+if [[ ! -f "$file" ]]; then
+    echo "File does not exist: $file"
+    exit 1
+fi
+
+# Validate the processing unit
+if ! containsElement "$processing_unit" "${valid_processing_units[@]}"; then
+    echo "Invalid processing unit: $processing_unit\nValid processing units: ${valid_processing_units[@]}"
+    exit 1
+fi
+
+# Validate the model
+if ! containsElement "$model" "${valid_models[@]}"; then
+    echo "Invalid model: $model\nValid models: ${valid_models[@]}"
+    exit 1
+fi
+
+# Validate the task
+if ! containsElement "$task" "${valid_tasks[@]}"; then
+    echo "Invalid task: $task\nValid tasks: ${valid_tasks[@]}"
+    exit 1
+fi
+
+# Validate the language if provided
+if [[ -n "$language" ]] && ! containsElement "$language" "${valid_languages[@]}"; then
+    echo "Invalid language: $language\nValid languages: ${valid_languages[@]}"
+    exit 1
+fi
+
+video_file_extension="${file##*.}"
+subtitle_format=""
+ffmpeg_subtitle_copy_format=""
+
+if [[ "$video_file_extension" == "mp4" ]]; then
+    subtitle_format="srt"
+    ffmpeg_subtitle_copy_format="mov_text"
+elif [[ "$video_file_extension" == "mkv" ]]; then
+    subtitle_format="vtt"
+    ffmpeg_subtitle_copy_format="srt"
+else
+    echo "Unsupported video format: .$video_file_extension"
+    exit 1
+fi
+
+# Generate random file name
+basename=$(cat /dev/urandom | LC_ALL=C tr -dc 'a-zA-Z0-9' | head -c20)
+video_file_name="$basename.$video_file_extension"
+audio_file_name="$basename.wav"
+subtitled_audio="$basename.$subtitle_format"
+subtitle_language="English"
+
+# Convert audio from video to required format for Whisper
+ffmpeg -i "$file" -ar 16000 -ac 1 -c:a pcm_s16le "$audio_file_name"
+
+# Perform the Whisper operation
+whisper-ctranslate2 --model "$model" --print_colors true --device "$processing_unit" --output_format "$subtitle_format" --patience 3 --word_timestamps true --task "$task" --language "$language" "$audio_file_name"
+
+if [[ "$subtitles_only" == "true" ]]; then
+    rm "$video_file_name"
+    rm "$audio_file_name"
+    exit 0
+fi
+
+# Package the subtitle file back into the video
+ffmpeg -i "$file" -i "$subtitled_audio" -c copy -c:s "$ffmpeg_subtitle_copy_format" -metadata:s:s:0 title="$subtitle_language" "$video_file_name"
+
+# Rename the video file to the original name
+mv -f "$video_file_name" "$file"
+
+# Clean up files
+rm "$basename"*

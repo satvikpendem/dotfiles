@@ -255,6 +255,10 @@ if [ "$(uname)" == "Darwin" ]; then
     chflags nohidden ~/Library/
 fi
 
+operational "$(chmod)ing scripts..."
+chmod +x $HOME/dotfiles/zsh/scripts/whisper/*
+chmod +x $HOME/dotfiles/zsh/scripts/yt-dlp/*
+
 operational "######################################"
 operational "###                                ###"
 operational "###           FINISHED!            ###"
