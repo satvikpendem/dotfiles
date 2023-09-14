@@ -30,14 +30,11 @@ valid_languages=("af" "am" "ar" "as" "az" "ba" "be" "bg" "bn" "bo" "br" "bs" "ca
 
 containsElement() {
     local e match="$1"
-    echo "Matching against: $match"
     shift
     for e; do
-        echo "Checking element: $e"
-        [[ "$e" == "$match" ]] && echo "Found match" && exit 0
+        [[ "$e" == "$match" ]] && return 0
     done
-    echo "No match found"
-    exit 1
+    return 1
 }
 
 while [[ $# -gt 0 ]]; do
@@ -145,34 +142,29 @@ subtitle_language="English"
 echo "Subtitle language: $subtitle_language"
 
 # Convert audio from video to required format for Whisper
-echo "Converting audio from video to required format for Whisper"
 ffmpeg -i "$file" -ar 16000 -ac 1 -c:a pcm_s16le "$audio_file_name"
 echo "Converted audio from video to required format for Whisper"
 
 # Perform the Whisper operation
 echo "Performing the Whisper operation"
 whisper-ctranslate2 --model "$model" --print_colors true --device "$processing_unit" --output_format "$subtitle_format" --patience 3 --word_timestamps true --task "$task" --language "$language" "$audio_file_name"
-echo "Performed the Whisper operation"
+echo "Completed Whisper operation"
 
-echo "Checking if subtitles only flag is true: $subtitles_only"
 if [[ "$subtitles_only" == "true" ]]; then
-    echo "Subtitles only flag is true, exiting..."
+    echo "Subtitles only flag is true, finishing..."
     rm "$video_file_name"
     rm "$audio_file_name"
     exit 0
 fi
 
 # Package the subtitle file back into the video
-echo "Packaging the subtitle file back into the video"
 ffmpeg -i "$file" -i "$subtitled_audio" -c copy -c:s "$ffmpeg_subtitle_copy_format" -metadata:s:s:0 title="$subtitle_language" "$video_file_name"
 echo "Packaged the subtitle file back into the video"
 
 # Rename the video file to the original name
-echo "Renaming the video file to the original name"
 mv -f "$video_file_name" "$file"
 echo "Renamed the video file to the original name"
 
 # Clean up files
-echo "Cleaning up files"
 rm "$basename"*
 echo "Cleaned up files"
