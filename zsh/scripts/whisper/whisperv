@@ -30,19 +30,19 @@ valid_languages=("af" "am" "ar" "as" "az" "ba" "be" "bg" "bn" "bo" "br" "bs" "ca
 
 containsElement() {
     local e match="$1"
+    echo "Matching against: $match"
     shift
-    for e; do [[ "$e" == "$match" ]] && exit 0; done
+    for e; do
+        echo "Checking element: $e"
+        [[ "$e" == "$match" ]] && echo "Found match" && exit 0
+    done
+    echo "No match found"
     exit 1
 }
 
 while [[ $# -gt 0 ]]; do
     key="$1"
     case $key in
-    -f | --file)
-        file="$2"
-        shift
-        shift
-        ;;
     -m | --model)
         model="$2"
         shift
@@ -68,18 +68,21 @@ while [[ $# -gt 0 ]]; do
         shift
         ;;
     *)
-        echo "Unknown argument: $key"
-        exit 1
+        # If the argument doesn't match any flag, treat it as the filename
+        file="$1"
+        shift
         ;;
     esac
 done
 
+echo "Checking if file is specified: $file"
 # Validate that the file is provided
 if [[ -z "$file" ]]; then
     echo "No file specified"
     exit 1
 fi
 
+echo "Checking if file exists: $file"
 # Validate that the file exists
 if [[ ! -f "$file" ]]; then
     echo "File does not exist: $file"
@@ -87,24 +90,28 @@ if [[ ! -f "$file" ]]; then
 fi
 
 # Validate the processing unit
+echo "Validating processing unit: $processing_unit"
 if ! containsElement "$processing_unit" "${valid_processing_units[@]}"; then
     echo "Invalid processing unit: $processing_unit\nValid processing units: ${valid_processing_units[@]}"
     exit 1
 fi
 
 # Validate the model
+echo "Validating model: $model"
 if ! containsElement "$model" "${valid_models[@]}"; then
     echo "Invalid model: $model\nValid models: ${valid_models[@]}"
     exit 1
 fi
 
 # Validate the task
+echo "Validating task: $task"
 if ! containsElement "$task" "${valid_tasks[@]}"; then
     echo "Invalid task: $task\nValid tasks: ${valid_tasks[@]}"
     exit 1
 fi
 
 # Validate the language if provided
+echo "Validating language: $language"
 if [[ -n "$language" ]] && ! containsElement "$language" "${valid_languages[@]}"; then
     echo "Invalid language: $language\nValid languages: ${valid_languages[@]}"
     exit 1
@@ -127,28 +134,45 @@ fi
 
 # Generate random file name
 basename=$(cat /dev/urandom | LC_ALL=C tr -dc 'a-zA-Z0-9' | head -c20)
+echo "Generated random file name: $basename"
 video_file_name="$basename.$video_file_extension"
+echo "Video file name: $video_file_name"
 audio_file_name="$basename.wav"
+echo "Audio file name: $audio_file_name"
 subtitled_audio="$basename.$subtitle_format"
+echo "Subtitled audio file name: $subtitled_audio"
 subtitle_language="English"
+echo "Subtitle language: $subtitle_language"
 
 # Convert audio from video to required format for Whisper
+echo "Converting audio from video to required format for Whisper"
 ffmpeg -i "$file" -ar 16000 -ac 1 -c:a pcm_s16le "$audio_file_name"
+echo "Converted audio from video to required format for Whisper"
 
 # Perform the Whisper operation
+echo "Performing the Whisper operation"
 whisper-ctranslate2 --model "$model" --print_colors true --device "$processing_unit" --output_format "$subtitle_format" --patience 3 --word_timestamps true --task "$task" --language "$language" "$audio_file_name"
+echo "Performed the Whisper operation"
 
+echo "Checking if subtitles only flag is true: $subtitles_only"
 if [[ "$subtitles_only" == "true" ]]; then
+    echo "Subtitles only flag is true, exiting..."
     rm "$video_file_name"
     rm "$audio_file_name"
     exit 0
 fi
 
 # Package the subtitle file back into the video
+echo "Packaging the subtitle file back into the video"
 ffmpeg -i "$file" -i "$subtitled_audio" -c copy -c:s "$ffmpeg_subtitle_copy_format" -metadata:s:s:0 title="$subtitle_language" "$video_file_name"
+echo "Packaged the subtitle file back into the video"
 
 # Rename the video file to the original name
+echo "Renaming the video file to the original name"
 mv -f "$video_file_name" "$file"
+echo "Renamed the video file to the original name"
 
 # Clean up files
+echo "Cleaning up files"
 rm "$basename"*
+echo "Cleaned up files"
