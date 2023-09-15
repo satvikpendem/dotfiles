@@ -129,7 +129,7 @@ else
     exit 1
 fi
 
-# Generate random file name
+# Generate random file name for output
 basename=$(cat /dev/urandom | LC_ALL=C tr -dc 'a-zA-Z0-9' | head -c20)
 echo "Generated random file name: $basename"
 video_file_name="$basename.$video_file_extension"
@@ -141,13 +141,22 @@ echo "Subtitled audio file name: $subtitled_audio"
 subtitle_language="English"
 echo "Subtitle language: $subtitle_language"
 
-# Convert audio from video to required format for Whisper
+# Convert audio from each video to 16-bit 16kHz PCM WAV as Whisper requires
 ffmpeg -i "$file" -ar 16000 -ac 1 -c:a pcm_s16le "$audio_file_name"
-echo "Converted audio from video to required format for Whisper"
+echo "Convert audio from each video to 16-bit 16kHz PCM WAV as Whisper requires"
 
 # Perform the Whisper operation
 echo "Performing the Whisper operation"
-whisper-ctranslate2 --model "$model" --print_colors true --device "$processing_unit" --output_format "$subtitle_format" --patience 3 --word_timestamps true --task "$task" --language "$language" "$audio_file_name"
+whisper-ctranslate2 \
+    --model "$model" \
+    --print_colors true \
+    --device "$processing_unit" \
+    --output_format "$subtitle_format" \
+    --patience 3 \
+    --word_timestamps true \
+    --task "$task" \
+    --language "$language" \
+    "$audio_file_name"
 echo "Completed Whisper operation"
 
 if [[ "$subtitles_only" == "true" ]]; then

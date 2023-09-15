@@ -25,11 +25,9 @@ for arg in "$@"; do
 done
 
 output="%(title)s.%(ext)s"
-is_playlist=false
 
 if [[ "$url" =~ "playlist" ]]; then
     output="%(playlist)s/%(playlist_index)04d - %(title)s.%(ext)s"
-    is_playlist=true
 fi
 
 if [ "$audio" = "true" ]; then
