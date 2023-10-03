@@ -40,7 +40,7 @@ apt_packages="build-essential clang fd-find libc++-dev libstdc++-10-dev libssl-d
 
 brew_taps="michaeleisel/homebrew-zld epk/epk"
 brew_packages="deno fd llvm neovim ruby yt-dlp zld"
-brew_cask_packages="alt-tab appcleaner chrome-remote-desktop-host discord firefox font-sf-mono-nerd-font github google-chrome iterm2 keka kekaexternalhelper linear-linear lunar maccy messenger neovide nordvpn parsec qbittorrent rectangle slack stats visual-studio-code"
+brew_cask_packages="aldente alt-tab appcleaner chrome-remote-desktop-host discord firefox font-sf-mono-nerd-font github google-chrome iterm2 itsycal keka kekaexternalhelper linear-linear linearmouse lunar maccy messenger neovide nordvpn parsec qbittorrent rectangle slack stats visual-studio-code"
 brew_overwrite_packages="ruby"
 
 cargo_packages="bat bunyan cargo-audit cargo-edit cargo-chef cargo-cmd cargo-cranky cargo-expand cargo-nextest cargo-tarpaulin dust erdtree eza fnm git-delta hyperfine jaq just live-server rewrk sccache skim sqlx starship tealdeer wasm-pack watchexec xh xq zoxide"

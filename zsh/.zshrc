@@ -111,7 +111,7 @@ if [[ "$(uname)" == "Linux" ]]; then
 elif [[ "$(uname)" == "Darwin" ]]; then
     alias bi="brew install"
     alias bu="brew uninstall"
-    alias bug="brew update && brew upgrade"
+    alias bug="brew update && brew upgrade && brew autoremove && brew cleanup --prune=all"
     alias bs="brew search"
     alias bt="brew tap"
     alias bta="brew tap --list"
