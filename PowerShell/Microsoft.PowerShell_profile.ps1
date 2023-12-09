@@ -81,8 +81,7 @@ function yt {
             # Replace backticks with double backticks
             $EscapedOutput = $Output -replace '`', '``'
 
-            # $WhisperInput = "`'.\$EscapedOutput`'"
-            # # $WhisperInput = $EscapedOutput
+            # Execute Whisper script
             'PowerShell -ExecutionPolicy Bypass -File C:\Users\Satvik\dotfiles\PowerShell\scripts\whisperv.ps1' + ' -File ' + "``"$EscapedOutput``""
         } else {
             'echo Done\n'
