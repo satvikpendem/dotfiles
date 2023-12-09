@@ -72,8 +72,16 @@ function yt {
         --concurrent-fragments 5 `
         --output $Output `
         --exec "$(if ($Subtitles.IsPresent) {
-            $WhisperInput = "`'.\$Output`'"
-            'powershell -file C:\Users\Satvik\dotfiles\PowerShell\scripts\whisperv.ps1' + ' ' + $WhisperInput
+            # Replace single quotes with two single quotes
+            $EscapedOutput = $Output -replace "'", "''"
+
+            # Replace double quotes with double backticks
+            $EscapedOutput = $Output -replace '"', '``'
+
+            # Replace backticks with double backticks
+            $EscapedOutput = $Output -replace '`', '``'
+
+            'PowerShell -ExecutionPolicy Bypass -File C:\Users\Satvik\dotfiles\PowerShell\scripts\whisperv.ps1' + ' ' + $EscapedOutput
         } else {
             'echo Done\n'
         })" `
