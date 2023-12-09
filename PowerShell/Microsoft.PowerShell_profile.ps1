@@ -73,7 +73,7 @@ function yt {
         --output $Output `
         --exec "$(if ($Subtitles.IsPresent) {
             $WhisperInput = "`'.\$Output`'"
-            'whisperv' + ' ' + $WhisperInput
+            'powershell -file C:\Users\Satvik\dotfiles\PowerShell\scripts\whisperv.ps1' + ' ' + $WhisperInput
         } else {
             'echo Done\n'
         })" `

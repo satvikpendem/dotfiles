@@ -1,6 +1,6 @@
 param(
     [string] $File,
-    [Parameter()] [ValidateSet('tiny', 'tiny.en', 'base', 'base.en', 'small', 'small.en', 'medium', 'medium.en', 'large', 'large-v1', 'large-v2')] [string] $Model = "large-v2",
+    [Parameter()] [ValidateSet('tiny', 'tiny.en', 'base', 'base.en', 'small', 'small.en', 'medium', 'medium.en', 'large', 'large-v1', 'large-v2', 'large-v3')] [string] $Model = "large-v3",
     [Parameter()] [ValidateSet('auto', 'cpu', 'cuda')] [string] $Processing_Unit = "cuda",
     # For generating subtitles only without packaging them into the video
     [switch] $SubtitlesOnly,
