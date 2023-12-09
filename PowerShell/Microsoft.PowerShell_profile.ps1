@@ -81,7 +81,9 @@ function yt {
             # Replace backticks with double backticks
             $EscapedOutput = $Output -replace '`', '``'
 
-            'PowerShell -ExecutionPolicy Bypass -File C:\Users\Satvik\dotfiles\PowerShell\scripts\whisperv.ps1' + ' ' + $EscapedOutput
+            # $WhisperInput = "`'.\$EscapedOutput`'"
+            # # $WhisperInput = $EscapedOutput
+            'PowerShell -ExecutionPolicy Bypass -File C:\Users\Satvik\dotfiles\PowerShell\scripts\whisperv.ps1' + ' -File ' + "``"$EscapedOutput``""
         } else {
             'echo Done\n'
         })" `
