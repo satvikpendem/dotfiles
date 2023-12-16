@@ -129,6 +129,18 @@ alias gp="git push -u"
 alias gap="git add . && git commit && git push"
 alias gic="git add . && git commit -am 'Init commit' && git push -u"
 ghi() {
+    # If the gh command is not found, return an error
+    if ! [ -x "$(command -v gh)" ]; then
+        echo "gh command not found"
+        # If on macOS, suggest to install gh using Homebrew
+        if [[ "$(uname)" == "Darwin" ]]; then
+            echo "Install gh using Homebrew: brew install gh"
+        elif [[ "$(uname)" == "Linux" ]]; then
+            echo "Install gh using apt: https://github.com/cli/cli/blob/trunk/docs/install_linux.md#debian-ubuntu-linux-raspberry-pi-os-apt"
+        fi
+        return 1
+    fi
+
     local REPO_NAME=""
     local REPO_VISIBILITY="--private"
     local REMOTE="origin"
@@ -153,24 +165,19 @@ ghi() {
         return 1
     fi
 
+    # If any subfolders have a `.git` directory, delete that `.git` directory
+    find . -type d -name ".git" -exec rm -rf {} \;
+
     # Check if `.git` directory exists, if not, initialize git
     if [ ! -d ".git" ]; then
         git init
         echo "Initialized git"
     fi
 
-    # Run the gh repo create command and store the output in a variable
+    # Run the `gh repo create` command and store the output in a variable
+    # This will also set the remote to the repository URL
     local GH_OUTPUT=$(gh repo create "$REPO_NAME" $REPO_VISIBILITY --source=. --remote=$REMOTE)
-    echo "Created repository on GitHub:"
-    echo "$GH_OUTPUT"
-
-    # Use grep and awk to parse the git repository URL from the output
-    local REPO=$(echo "$GH_OUTPUT" | grep -o 'git@github.com:[^ ]*' | awk '{print $1}')
-    echo "Repository URL: $REPO"
-
-    # Add the remote origin
-    git remote add origin "$REPO"
-    echo "Added remote origin"
+    echo "Created repository on GitHub: $GH_OUTPUT"
 
     # Add all files and commit
     git add .
