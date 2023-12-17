@@ -5,6 +5,9 @@ if [[ "$(uname)" == "Darwin" ]]; then
 
     # Ruby (for XCode)
     export PATH="/opt/homebrew/lib/ruby/gems/3.2.0/bin:$PATH"
+
+    # iTerm2 integration
+    test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 fi
 
 # Rust
@@ -231,22 +234,17 @@ alias vv="vim ~/.vimrc"
 zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*'
 autoload -Uz compinit && compinit
 
-# zsh-autosuggestions (https://github.com/zsh-users/zsh-autosuggestions)
-source $HOME/dotfiles/zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
+# # zsh-autosuggestions (https://github.com/zsh-users/zsh-autosuggestions)
+# source $HOME/dotfiles/zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
 
-# history-substring-search
-source $HOME/dotfiles/zsh/zsh-history-substring-search/zsh-history-substring-search.zsh
-source $HOME/dotfiles/zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-bindkey "$terminfo[kcuu1]" history-substring-search-up
-bindkey "$terminfo[kcud1]" history-substring-search-down
-HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='bg=green,fg=white,bold'
-HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND='bg=red,fg=white,bold'
-HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS='i'
+# # history-substring-search
+# source $HOME/dotfiles/zsh/zsh-history-substring-search/zsh-history-substring-search.zsh
+# source $HOME/dotfiles/zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+# bindkey "$terminfo[kcuu1]" history-substring-search-up
+# bindkey "$terminfo[kcud1]" history-substring-search-down
+# HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='bg=green,fg=white,bold'
+# HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND='bg=red,fg=white,bold'
+# HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS='i'
 
 # Use bat with manpages
 export MANPAGER="sh -c 'col -bx | bat -l man -p'"
-
-# iTerm2 integration
-if [[ "$(uname)" == "Darwin" ]]; then
-    test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
-fi
