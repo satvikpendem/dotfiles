@@ -151,9 +151,10 @@ else
     cmake --build .
 fi
 # sold requires a license file to be present in the root directory
-cd $HOME/mold
-touch ../LICENSE
+# cd $HOME/mold
+# touch ../LICENSE
 sudo cmake --install .
+cd $HOME
 rm -rf $HOME/mold
 
 cd $HOME

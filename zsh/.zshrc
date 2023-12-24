@@ -6,6 +6,10 @@ if [[ "$(uname)" == "Darwin" ]]; then
     # Ruby (for XCode)
     export PATH="/opt/homebrew/lib/ruby/gems/3.2.0/bin:$PATH"
 
+    # Postgres
+    export PATH="/opt/homebrew/opt/postgresql@16/bin:$PATH"
+    export PKG_CONFIG_PATH="/opt/homebrew/opt/postgresql@16/lib/pkgconfig"
+
     # iTerm2 integration
     test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 fi

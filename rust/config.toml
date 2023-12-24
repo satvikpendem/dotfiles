@@ -13,6 +13,8 @@ rustflags = [
 # mold/sold linker
 linker = "/usr/bin/clang"
 rustflags = [
+    "-L",
+    "/opt/homebrew/lib",
     "-C",
     "link-arg=-fuse-ld=/usr/local/bin/mold",
     "-C",
