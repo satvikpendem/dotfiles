@@ -234,9 +234,9 @@ alias vz="vim ~/.zshrc"
 alias sz="source ~/.zshrc"
 alias vv="vim ~/.vimrc"
 
-# zsh cd case insensitive
-zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*'
-autoload -Uz compinit && compinit
+# # zsh cd case insensitive
+# zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*'
+# autoload -Uz compinit && compinit
 
 # # zsh-autosuggestions (https://github.com/zsh-users/zsh-autosuggestions)
 # source $HOME/dotfiles/zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
