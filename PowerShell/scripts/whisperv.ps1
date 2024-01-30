@@ -73,8 +73,7 @@ ffmpeg -i $File -i $subtitled_audio -c copy -c:s $ffmpeg_subtitle_copy_format -m
 # Rename the original video to a temporary name
 $temp_file = "$File.bak"
 Rename-Item -Force $File $temp_file
-# Rename the video file to the original name. We use `-Force` to overwrite the file since the original video file is no longer needed.
+# Clean up files. Rename the video file to the original name. We use `-Force` to overwrite the file since the original video file is no longer needed.
+Remove-Item -Force $audio_file_name*
 Rename-Item -Force $video_file_name $File
-# Clean up files
-Remove-Item $audio_file_name*
-Remove-Item $temp_file
+Remove-Item -Force $temp_file
