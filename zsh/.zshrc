@@ -3,6 +3,9 @@ if [[ "$(uname)" == "Darwin" ]]; then
     export PATH="/opt/homebrew/bin:$PATH"
     export PATH="/opt/homebrew/opt/curl/bin:$PATH"
 
+    # Python
+    export PATH="/opt/homebrew/opt/python/libexec/bin:$PATH"
+
     # Ruby (for XCode)
     export PATH="/opt/homebrew/lib/ruby/gems/3.2.0/bin:$PATH"
 
